@@ -3,6 +3,7 @@
 
 #include "power.h"
 #include "bios_tools.h"
+#include "LineRenderer.h"
 
 void halt(void)
 {
@@ -25,4 +26,6 @@ void reboot(void)
 void poweroff(void)
 {
 	/* TODO: ACPI */
+	terminal_cls();
+	terminal_writestring("It is now safe to power off your computer.");
 }
