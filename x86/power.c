@@ -28,4 +28,5 @@ void poweroff(void)
 	/* TODO: ACPI */
 	terminal_cls();
 	terminal_writestring("It is now safe to power off your computer.");
+	halt();
 }
