@@ -3,7 +3,8 @@ Some things to work on towards finishing LineKernel.
 - ✅ Some sort of drives (temporary)
 	Floppies
 
-- 🚧 Some sort of filesystem (temporary)
+- ✅ Some sort of filesystem (temporary)
+	FAT12
 
 - 🚧 Executables
 
