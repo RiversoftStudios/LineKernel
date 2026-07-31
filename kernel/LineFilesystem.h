@@ -8,6 +8,8 @@
 #include "fat12.h"
 #include "kconfig.h"
 #include "LineKernel/predefined_fileno.h"
+#include "LineKernel/contents_t.h"
+#include <stddef.h>
 
 enum filesystemformat {
 	nofilesystem,
@@ -26,5 +28,11 @@ int makedir(const char* path);
 int removedir(const char* path);
 int write_fileno(int fileno, const void* buf, size_t nbyte);
 int removefile(const char* path);
+
+/* ssize_t isn't defined, so this will have to do for now... */
+ptrdiff_t read_fileno(int fileno, void* buf, size_t count);
+
+int list_contents(const char* path, contents_t* fcontents, size_t count);
+size_t get_size(int fileno);
 
 #endif

@@ -13,5 +13,9 @@ char *strtok(char *s, const char *delim);
 int strcmp(const char *s1, const char *s2);
 void itoa(int N, char* str);
 int sscanf(const char* buff, char* format, ...) __attribute__ ((format (scanf, 2, 3)));
+void* memcpy(void* dest, const void* src, size_t n);
+void* memset(void* s, int c, size_t n);
+int memcmp(const void* s1, const void* s2, size_t n);
 
 #endif
+

@@ -21,5 +21,8 @@
 #define SYS_removedir   9
 #define SYS_write      10
 #define SYS_remove     11
+#define SYS_read       12
+#define SYS_list       13
+#define SYS_size       14
 
 #endif

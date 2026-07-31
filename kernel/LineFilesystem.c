@@ -41,8 +41,11 @@ int close_fileno(int fileno)
 {
 	if (has_working_drive != 1) return -32;
 	if (fileno == LINEOUT_FILENO) return -5;
-	/* TODO: Close a fileno (also known as file descriptor in UNIX) */
 	switch (fs) {
+#ifdef CONFIG_FAT12
+		case fat12:
+			return fat12_close(fileno);
+#endif
 		default:
 			return -1;
 	}
@@ -55,8 +58,11 @@ int close_fileno(int fileno)
 int open_fileno(const char* filename)
 {
 	if (has_working_drive != 1) return -32;
-	/* TODO: Open a fileno */
 	switch (fs) {
+#ifdef CONFIG_FAT12
+		case fat12:
+			return fat12_open(filename);
+#endif
 		default:
 			return -1;
 	}
@@ -69,8 +75,11 @@ int open_fileno(const char* filename)
 int rename_filepath(const char* oldpath, const char* newpath)
 {
 	if (has_working_drive != 1) return -32;
-	/* TODO: Rename a file, moving it between directories if required */
 	switch (fs) {
+#ifdef CONFIG_FAT12
+		case fat12:
+			return fat12_rename(oldpath, newpath);
+#endif
 		default:
 			return -1;
 	}
@@ -83,8 +92,11 @@ int rename_filepath(const char* oldpath, const char* newpath)
 int makedir(const char* path)
 {
 	if (has_working_drive != 1) return -32;
-	/* TODO: Make directory */
 	switch (fs) {
+#ifdef CONFIG_FAT12
+		case fat12:
+			return fat12_makedir(path);
+#endif
 		default:
 			return -1;
 	}
@@ -98,8 +110,11 @@ int makedir(const char* path)
 int removedir(const char* path)
 {
 	if (has_working_drive != 1) return -32;
-	/* TODO: Remove empty directory */
 	switch (fs) {
+#ifdef CONFIG_FAT12
+		case fat12:
+			return fat12_removedir(path);
+#endif
 		default:
 			return -1;
 	}
@@ -113,8 +128,11 @@ int removedir(const char* path)
 int removefile(const char* filename)
 {
 	if (has_working_drive != 1) return -32;
-	/* TODO: Remove file if not in use by any filenos */
 	switch (fs) {
+#ifdef CONFIG_FAT12
+		case fat12:
+			return fat12_removefile(filename);
+#endif
 		default:
 			return -1;
 	}
@@ -131,8 +149,60 @@ int write_fileno(int fileno, const void* buf, size_t nbyte)
 		return 0;
 	}
 	if (has_working_drive != 1) return -32;
-	/* TODO: Write to a fileno */
 	switch (fs) {
+#ifdef CONFIG_FAT12
+		case fat12:
+			return fat12_write(fileno, buf, nbyte);
+#endif
+		default:
+			return -1;
+	}
+}
+
+/** @retval 0 Success
+ ** @retval -32 No drive
+ ** @retval -5 Bad fileno
+ ** @retval other Unknown error */
+ptrdiff_t read_fileno(int fileno, void* buf, size_t count)
+{
+	if (has_working_drive != 1) return -32;
+	if (fileno == LINEOUT_FILENO) return -5;
+	switch (fs) {
+#ifdef CONFIG_FAT12
+		case fat12:
+			return fat12_read(fileno, buf, count);
+#endif
+		default:
+			return -1;
+	}
+}
+
+/** @retval 0 Success
+ ** @retval -32 No drive
+ ** @retval -9 No such file/directory
+ ** @retval other Unknown error */
+int list_contents(const char* path, contents_t* fcontents, size_t count)
+{
+	if (has_working_drive != 1) return -32;
+	switch (fs) {
+#ifdef CONFIG_FAT12
+		case fat12:
+			return fat12_listcontent(path, fcontents, count);
+#endif
+		default:
+			return -1;
+	}
+}
+
+/** @retval 0 Empty
+ ** @retval other Size */
+size_t get_size(int fileno)
+{
+	switch (fs) {
+#ifdef CONFIG_FAT12
+		case fat12:
+			return fat12_get_size(fileno);
+#endif
 		default:
 			return -1;
 	}

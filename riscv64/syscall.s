@@ -40,7 +40,7 @@ syscall_handler:
 .is_syscall:
 	# 3. Check boundaries (If a7 >= [number], jump to bad_syscall)
 	# REPLACEMAXSYSCALL
-	li t0, 12
+	li t0, 15
 	bgeu a7, t0, .bad_syscall
 
 	# 4. Invoke the C handler

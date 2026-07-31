@@ -79,6 +79,21 @@ DEFINECALL(remove, uintptr_t filename)
 	return removefile((const char*)filename);
 }
 
+DEFINECALL(read, int fileno, uintptr_t buf, size_t count)
+{
+	return read_fileno(fileno, (void*)buf, count);
+}
+
+DEFINECALL(list, uintptr_t path, uintptr_t fcontents, size_t count)
+{
+	return list_contents((const char*)path, (contents_t*)fcontents, count);
+}
+
+DEFINECALL(size, int fileno)
+{
+	return get_size(fileno);
+}
+
 void* syscall_table[] = {
 	COMMAND2TABLE(print2),
 	COMMAND2TABLE(termcolor),
@@ -92,4 +107,7 @@ void* syscall_table[] = {
 	COMMAND2TABLE(removedir),
 	COMMAND2TABLE(write),
 	COMMAND2TABLE(remove),
+	COMMAND2TABLE(read),
+	COMMAND2TABLE(list),
+	COMMAND2TABLE(size),
 };

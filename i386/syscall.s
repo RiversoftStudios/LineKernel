@@ -20,7 +20,7 @@ syscall_handler:
 
 	# Check boundaries (If EAX >= [number], jump to bad_syscall)
 	# REPLACEMAXSYSCALL
-	cmpl $12, %eax
+	cmpl $15, %eax
 	jae .bad_syscall
 
 	call *syscall_table(,%eax,4)

@@ -11,6 +11,7 @@
 #include "syscall_init.h"
 #include "version.h"
 #include "LineKernel/syscall.h"
+#include "LineKernel/contents_t.h"
 #ifdef CONFIG_PS2_KEYBOARD
 #include "ps2_keyboard.h"
 #endif
@@ -133,6 +134,34 @@ void kernel_main(void)
 	// syscall3(SYS_termscolor, 0, 0, 0);
 	// syscall3(SYS_termcursor, 3, 3, 0);
 	// syscall3(SYS_write, 2, (uintptr_t)"LineKernel!", 4);
+
+	/* Test SYS_list:
+	contents_t filelist[5];
+	int fileno3 = syscall3(SYS_list, (uintptr_t)"/", (uintptr_t)filelist, sizeof(filelist));
+	terminal_writestring(filelist[0].filename);
+	terminal_writestring(filelist[1].filename);
+	terminal_writestring(filelist[2].filename);
+	*/
+
+	/* Test SYS_read:
+	char output3[50];
+	int fileno3 = syscall3(SYS_open, (uintptr_t)"LINENN", 0, 0);
+	printf("%d", syscall3(SYS_read, fileno3, (uintptr_t)output3, sizeof(output3)));
+	terminal_writestring(output3);
+	*/
+
+	/* Test SYS_write:
+	char output3[] = "line core";
+	int fileno3 = syscall3(SYS_open, (uintptr_t)"LINENN", 0, 0);
+	printf("%d", syscall3(SYS_write, fileno3, (uintptr_t)output3, sizeof(output3)));
+	terminal_writestring(output3);
+	*/
+
+	/* Test SYS_size:
+	int fileno4 = syscall3(SYS_open, (uintptr_t)"README.MD", 0, 0);
+	printf("fileno4 = %d\n", fileno4);
+	printf("%d", syscall3(SYS_size, fileno4, 0, 0));
+	*/
 
 	for (;;) {
 		terminal_write_for_char(get_char());
