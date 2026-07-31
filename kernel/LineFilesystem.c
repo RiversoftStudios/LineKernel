@@ -54,6 +54,7 @@ int close_fileno(int fileno)
 /** @retval -1 Unknown error
  ** @retval -32 No drive
  ** @retval -9 No such file
+ ** @retval 0 Not possible
  ** @retval other fileno */
 int open_fileno(const char* filename)
 {
@@ -138,15 +139,15 @@ int removefile(const char* filename)
 	}
 }
 
-/** @retval 0 Success
- ** @retval -32 No drive
+/** @retval -32 No drive
  ** @retval -5 Bad fileno
- ** @retval other Unknown error */
-int write_fileno(int fileno, const void* buf, size_t nbyte)
+ ** @retval negative Unknown error
+ ** @retval other Bytes written */
+ptrdiff_t write_fileno(int fileno, const void* buf, size_t nbyte)
 {
 	if (fileno == LINEOUT_FILENO) {
 		terminal_write((const char*)buf, nbyte);
-		return 0;
+		return nbyte;
 	}
 	if (has_working_drive != 1) return -32;
 	switch (fs) {
@@ -159,10 +160,10 @@ int write_fileno(int fileno, const void* buf, size_t nbyte)
 	}
 }
 
-/** @retval 0 Success
- ** @retval -32 No drive
+/** @retval -32 No drive
  ** @retval -5 Bad fileno
- ** @retval other Unknown error */
+ ** @retval negative Unknown error
+ ** @retval other Bytes read */
 ptrdiff_t read_fileno(int fileno, void* buf, size_t count)
 {
 	if (has_working_drive != 1) return -32;
