@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later
- * SPDX-FileCopyrightText: Copyright (C) 2026 River Games */
+ * SPDX-FileCopyrightText: Copyright (C) 2026 Riversoft Studios */
 
 #ifndef __BIOS_TOOLS_H__
 #define __BIOS_TOOLS_H__

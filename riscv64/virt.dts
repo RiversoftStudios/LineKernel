@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later
- * SPDX-FileCopyrightText: Copyright (C) 2026 River Games */
+ * SPDX-FileCopyrightText: Copyright (C) 2026 Riversoft Studios */
 /* Originally from: https://github.com/DonaldKellett/marvelos/blob/9c15a0d988e68f7997cd29e93ad9e3b0bd2bb00d/misc/riscv64-virt.dts */
 
 /dts-v1/;

@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later
- * SPDX-FileCopyrightText: Copyright (C) 2026 River Games */
+ * SPDX-FileCopyrightText: Copyright (C) 2026 Riversoft Studios */
 
 /* NOTE! Functions without `drivesformat_t drives` OR `filesystemformat_t filesystem` will
  * simply just use the `fs` variable, which is the "current filesystem".

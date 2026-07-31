@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later
- * SPDX-FileCopyrightText: Copyright (C) 2026 River Games */
+ * SPDX-FileCopyrightText: Copyright (C) 2026 Riversoft Studios */
 
 #include "panic.h"
 
@@ -21,7 +21,7 @@ char* error_art[] = {
 
 /* https://www.asciiart.eu/art/a5b14e0367b64925 */
 		"BBBBBBBBBBBBBBBBBBBBBBBBBBB\n"
-		"BMB-River Games---------B B\n"
+		"BMB-Riversoft Studios---------B B\n"
 		"BBB---------------------BBB\n"
 		"BBB-----LineCoreOS------BBB\n"
 		"BBB---------------------BBB\n"

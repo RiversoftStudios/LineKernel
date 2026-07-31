@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later
- * SPDX-FileCopyrightText: Copyright (C) 2026 River Games */
+ * SPDX-FileCopyrightText: Copyright (C) 2026 Riversoft Studios */
 /* Originally from: https://github.com/DonaldKellett/marvelos/blob/main/src/asm/crt0.s */
 
 # Disable generation of compressed instructions

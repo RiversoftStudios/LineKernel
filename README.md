@@ -30,9 +30,9 @@ Note that you can also use `make xconfig` for X config, `make allyesconfig` for 
     + `make ARCH=riscv64` - Compile using riscv64-elf for riscv64
     + `make run ARCH=riscv64` - Run an riscv64 kernel image in QEMU
 
-<sup>(c) 2026 River Games Studios ~ LineKernel (Project Estuary)</sup>
+<sup>(c) 2026 Riversoft Studios ~ LineKernel (Project Estuary)</sup>
 
 <!--
 SPDX-License-Identifier: CC0-1.0
-SPDX-FileCopyrightText: Copyright (C) 2026 River Games
+SPDX-FileCopyrightText: Copyright (C) 2026 Riversoft Studios
 -->

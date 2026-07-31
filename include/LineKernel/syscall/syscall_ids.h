@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later
- * SPDX-FileCopyrightText: Copyright (C) 2026 River Games */
+ * SPDX-FileCopyrightText: Copyright (C) 2026 Riversoft Studios */
 
 #ifndef _LineKernel___SYSCALL_IDS_H__
 #define _LineKernel___SYSCALL_IDS_H__
