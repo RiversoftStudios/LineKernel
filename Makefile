@@ -55,6 +55,7 @@ kconfig/frontends/%:
 menuconfig: Kconfig $(MENUCONFIG)
 	$(MENUCONFIG) Kconfig
 
+defconfig: allyesconfig
 allyesconfig: Kconfig $(CONSOLECONFIG)
 	$(CONSOLECONFIG) Kconfig --allyesconfig
 
