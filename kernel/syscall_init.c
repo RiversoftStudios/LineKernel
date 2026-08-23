@@ -24,9 +24,7 @@ void syscall_init(void)
 #endif
 
 #if defined(ARCH_riscv64)
-	/* TODO: change from Machine Mode to Supervisor Mode on RISC-V eventually.
-	 * It is not essential(?) but we should still do it. */
 	/* `mtvec` (Machine Mode) or `stvec` (Supervisor Mode) */
-	__asm__ volatile("csrw mtvec, %0" :: "r"(syscall_handler));
+	__asm__ volatile("csrw stvec, %0" :: "r"(syscall_handler));
 #endif
 }

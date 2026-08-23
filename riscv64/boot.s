@@ -1,45 +1,10 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later
  * SPDX-FileCopyrightText: Copyright (C) 2026 Riversoft Studios */
-/* Originally from: https://github.com/DonaldKellett/marvelos/blob/main/src/asm/crt0.s */
 
-# Disable generation of compressed instructions
-# This is to avoid complications when setting values
-# of CSRs such as mtvec and stvec which require alignment
-.option norvc
-
-.section .init, "ax"
+.section .init
 .global _start
 _start:
-  .cfi_startproc
-  .cfi_undefined ra
+  la sp, stack_top
+  call kernel_main
 
-  # Initialize satp, mepc CSRs
-  csrw satp, zero
-  la t0, kernel_main
-  csrw mepc, t0
-
-  # Zero the BSS section
-  la t0, __bss_start
-  la t1, __bss_end
-__bss_zero_loop_start:
-  bgeu t0, t1, __bss_zero_loop_end
-  sd zero, 0(t0)
-  addi t0, t0, 8
-  j __bss_zero_loop_start
-__bss_zero_loop_end:
-
-  # Initialize global pointer register
-  .option push
-  .option norelax
-  la gp, __global_pointer
-  .option pop
-
-  # Initialize stack and frame pointer registers
-  la sp, __stack_top
-  mv fp, sp
-
-  # Jump to our kernel
-  j kernel_main
-
-  .cfi_endproc
-  .end
+stack_top:
