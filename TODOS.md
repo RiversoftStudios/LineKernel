@@ -10,5 +10,5 @@ Also see: [Finishing LineKernel](TODO)
 
 <!--
 SPDX-License-Identifier: CC0-1.0
-SPDX-FileCopyrightText: Copyright (C) 2026 River Games
+SPDX-FileCopyrightText: Copyright (C) 2026 Riversoft Studios
 -->

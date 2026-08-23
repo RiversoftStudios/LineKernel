@@ -1,4 +1,0 @@
-SPDX-License-Identifier: BSD-3-Clause
-SPDX-FileCopyrightText: Copyright (c) 1998 Softweyr LLC.  All rights reserved.
-
-Source: https://github.com/freebsd/freebsd-src/blob/main/lib/libc/string/strtok.c

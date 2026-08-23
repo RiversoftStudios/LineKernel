@@ -3,7 +3,6 @@
 
 #include "str.h"
 #include "strlcpy.c"
-#include "strtok.c"
 #include "strcmp.c"
 #include "c_scan.c"
 
