@@ -2,6 +2,7 @@
  * SPDX-FileCopyrightText: Copyright (C) 2026 Riversoft Studios */
 
 #include "power.h"
+#include "kconfig.h"
 
 #ifdef CONFIG_VIRT_MACHINE
 #define SYSCON_ADDR 0x100000

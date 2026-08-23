@@ -22,13 +22,7 @@
 #elif defined(__i386__) || defined(_M_IX86)
 	#define CPU_BITS 32
 #elif defined(__riscv)
-	#if __riscv_xlen == 64
-		#define CPU_BITS 64
-	#elif __riscv_xlen == 32
-		#define ARCH_BITS 32
-	#else
-		#error "Unknown RISC-V bit width"
-	#endif
+	#define CPU_BITS __riscv_xlen
 #else
 	#error "Unsupported architecture"
 #endif
