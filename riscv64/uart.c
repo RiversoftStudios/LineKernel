@@ -7,7 +7,7 @@
 
 void uart_init(void)
 {
-	volatile uint8_t* ptr = (uint8_t *) UART_ADDR;
+	volatile uint8_t* ptr = (volatile uint8_t *) UART_ADDR;
 
 	/* Set word length to 8 (LCR[1:0]) */
 	const uint8_t LCR = 0x3;

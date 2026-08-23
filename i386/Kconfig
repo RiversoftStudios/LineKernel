@@ -27,6 +27,12 @@ config CURSOR_FULL
 
 endchoice
 
+config RESET_CONSOLE
+    bool "reset console"
+    default y
+    help
+      Clear the console on boot?
+
 config SERIAL_CONSOLE
     bool "serial console"
     default y

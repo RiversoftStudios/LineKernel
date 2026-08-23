@@ -62,6 +62,14 @@ uint16_t vga_terminal_cursor_position(void)
 	return pos;
 }
 
+void vga_terminal_get_cursor(uint8_t *x, uint8_t *y)
+{
+	uint16_t pos = vga_terminal_cursor_position();
+
+	if (x != NULL) *x = (uint8_t)(pos % VGA_WIDTH);
+	if (y != NULL) *y = (uint8_t)(pos / VGA_WIDTH);
+}
+
 void vga_terminal_update_cursor(int x, int y)
 {
 	uint16_t pos = y * VGA_WIDTH + x;
@@ -74,9 +82,18 @@ void vga_terminal_update_cursor(int x, int y)
 
 void vga_terminal_initialize(void)
 {
+#ifndef CONFIG_RESET_CONSOLE
+	uint8_t oldx;
+	uint8_t oldy;
+#endif
 	vga_terminal_color = vga_entry_color(COLOR_LIGHT_GREY, COLOR_BLACK);
-
+#ifdef CONFIG_RESET_CONSOLE
 	vga_terminal_cls();
+#else
+	vga_terminal_get_cursor(&oldx, &oldy);
+	vga_terminal_column = oldx;
+	vga_terminal_row = oldy;
+#endif
 }
 
 void vga_terminal_putentryat(char c, uint8_t color, size_t x, size_t y)
