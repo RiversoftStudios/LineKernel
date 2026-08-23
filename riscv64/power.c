@@ -8,6 +8,8 @@
 #define SYSCON_ADDR 0x100000
 #endif
 
+/* TODO: Some of these values are specific to `virt`. */
+
 void poweroff(void)
 {
 	*(uint32_t *) SYSCON_ADDR = 0x5555;
