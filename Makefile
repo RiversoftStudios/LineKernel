@@ -28,7 +28,6 @@ CFLAGS ?= -O2 -pipe
 CFLAGS += -Ikernel -Ithird-party -I$(ARCH) $(META_ARCH_FLAGS) -Iinclude -DARCH_$(ARCH) -DARCH=\"$(ARCH)\" -DVERSION=\"$(VERSION)\" -std=gnu99 -ffreestanding -Wall -Wextra -Wmissing-declarations -fstack-protector-all $(ARCH_CFLAGS)
 OBJ = $(ARCH_OBJ) $(META_ARCH_OBJ) $(KERNEL_OBJ)
 
-MENUCONFIG = kconfig/frontends/mconf/kconfig-mconf
 CONSOLECONFIG = kconfig/frontends/conf/kconfig-conf
 
 all:
@@ -52,8 +51,8 @@ Kconfig: Kconfig.template
 kconfig/frontends/%:
 	cd kconfig; ./configure; $(MAKE)
 
-menuconfig: Kconfig $(MENUCONFIG)
-	$(MENUCONFIG) Kconfig
+askconfig: Kconfig $(CONSOLECONFIG)
+	$(CONSOLECONFIG) Kconfig --oldaskconfig
 
 defconfig: allyesconfig
 allyesconfig: Kconfig $(CONSOLECONFIG)
