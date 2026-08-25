@@ -4,7 +4,6 @@
 #include "str.h"
 #include "strlcpy.c"
 #include "strcmp.c"
-#include "c_scan.c"
 
 size_t strlen(const char* str)
 {
