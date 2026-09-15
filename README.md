@@ -13,7 +13,7 @@ This kernel is for the LineCoreOS [x86](https://wiki.rivergames.ca/wiki/History_
 + kconfig-frontends
 
 ### Makefile Instructions
-Note that you can also use `make xconfig` for X config, `make allyesconfig` for All Yes config, `make allnoconfig` for All No config.
+Note that you can also use `make defconfig` for the default config, `make allnoconfig` for All No config.
 + **For i386**
     + `make askconfig ARCH=i386` - Configure LineKernel
     + `make ARCH=i386` - Compile using i686-elf for i386
