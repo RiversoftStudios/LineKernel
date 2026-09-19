@@ -3,8 +3,10 @@
 
 lineindentf()
 {
-    indent -bad -bap -br -ce -cdw -npcs -ncs -nbc -npsl -brs -blf -ut -l100 -ngts -fca -fnc -nlps -ncdw -i4 -ts4 -nlp -pal $1
-    rm $1~
+    for textf ; do
+        indent -bad -bap -br -ce -cdw -npcs -ncs -nbc -npsl -brs -blf -ut -l100 -ngts -fca -fnc -nlps -ncdw -i4 -ts4 -nlp -pal $textf
+        rm $textf~
+    done
 }
 
 lineindent()
