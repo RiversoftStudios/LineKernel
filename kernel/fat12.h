@@ -61,7 +61,7 @@ int fat12_makedir(const char* path);
 int fat12_removedir(const char* path);
 int fat12_removefile(const char* filename);
 ptrdiff_t fat12_read(int fileno, void* buf, size_t count);
-int fat12_listcontent(const char* path, contents_t* fcontents, size_t count);
+int fat12_listcontent(const char* path, contents_t * fcontents, size_t count);
 size_t fat12_get_size(int fileno);
 #endif
 

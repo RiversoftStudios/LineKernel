@@ -29,10 +29,10 @@ char get_char(void)
 #endif
 
 #ifdef ARCH_riscv64
-	while ((ready = sbi_getchar()) == -1); /* Scary, but does work! */
+	while ((ready = sbi_getchar()) == -1);	/* Scary, but does work! */
 	c = ready;
 	if (c == '\r')
-		c = '\n';			/* Workaround for newlines */
+		c = '\n';				/* Workaround for newlines */
 	return c;
 #endif
 

@@ -32,7 +32,7 @@ int removefile(const char* path);
 ptrdiff_t read_fileno(int fileno, void* buf, size_t count);
 ptrdiff_t write_fileno(int fileno, const void* buf, size_t nbyte);
 
-int list_contents(const char* path, contents_t* fcontents, size_t count);
+int list_contents(const char* path, contents_t * fcontents, size_t count);
 size_t get_size(int fileno);
 
 #endif

@@ -36,7 +36,8 @@ filesystemformat_t fs = nofilesystem;
 int has_working_drive = 0;
 char cmdline_str[100];
 
-void handle_single_argument(char* arg) {
+void handle_single_argument(char* arg)
+{
 	if (strcmp(arg, "drive=nodrive") == 0) {
 		drive = nodrive;
 	}
@@ -51,13 +52,18 @@ void handle_single_argument(char* arg) {
 	}
 }
 
-void parse_cmdline(char* cmdline) {
-	if (!cmdline) return;
+void parse_cmdline(char* cmdline)
+{
+	if (!cmdline)
+		return;
 
 	char* token = cmdline;
+
 	while (*token != '\0') {
-		while (*token == ' ') token++;
-		if (*token == '\0') break;
+		while (*token == ' ')
+			token++;
+		if (*token == '\0')
+			break;
 
 		char* arg_start = token;
 
@@ -94,7 +100,8 @@ void initialize_start(void)
 	terminal_writestring("System Timer (PIT) initialized at 1000Hz.\n");
 
 	/* Enable hardware interrupts */
-	__asm__ volatile("sti");
+	__asm__ volatile ("sti");
+
 	terminal_writestring("Interrupts enabled.\n");
 #endif
 
@@ -128,40 +135,24 @@ void kernel_main(void)
 	terminal_writestring("Core services initialized.\n\n");
 	we_are_running();
 
-	/* syscall3(SYS_termclear, 0, 0, 0);
-	syscall3(SYS_termcolor, COLOR_WHITE, COLOR_BLUE, 0);
-	syscall3(SYS_print2, (uintptr_t)"LineKernel!\n", 0, 0);
-	syscall3(SYS_termscolor, 0, 0, 0);
-	syscall3(SYS_termcursor, 3, 3, 0);
-	syscall3(SYS_write, 2, (uintptr_t)"LineKernel!", 4); */
+	/* syscall3(SYS_termclear, 0, 0, 0); syscall3(SYS_termcolor, COLOR_WHITE, COLOR_BLUE, 0);
+	   syscall3(SYS_print2, (uintptr_t)"LineKernel!\n", 0, 0); syscall3(SYS_termscolor, 0, 0, 0);
+	   syscall3(SYS_termcursor, 3, 3, 0); syscall3(SYS_write, 2, (uintptr_t)"LineKernel!", 4); */
 
-	/* Test SYS_list:
-	contents_t filelist[5];
-	int fileno3 = syscall3(SYS_list, (uintptr_t)"/", (uintptr_t)filelist, sizeof(filelist));
-	terminal_writestring(filelist[0].filename);
-	terminal_writestring(filelist[1].filename);
-	terminal_writestring(filelist[2].filename);
-	*/
+	/* Test SYS_list: contents_t filelist[5]; int fileno3 = syscall3(SYS_list, (uintptr_t)"/",
+	   (uintptr_t)filelist, sizeof(filelist)); terminal_writestring(filelist[0].filename);
+	   terminal_writestring(filelist[1].filename); terminal_writestring(filelist[2].filename); */
 
-	/* Test SYS_read:
-	char output3[50];
-	int fileno3 = syscall3(SYS_open, (uintptr_t)"LINENN", 0, 0);
-	printf("%d", syscall3(SYS_read, fileno3, (uintptr_t)output3, sizeof(output3)));
-	terminal_writestring(output3);
-	*/
+	/* Test SYS_read: char output3[50]; int fileno3 = syscall3(SYS_open, (uintptr_t)"LINENN", 0,
+	   0); printf("%d", syscall3(SYS_read, fileno3, (uintptr_t)output3, sizeof(output3)));
+	   terminal_writestring(output3); */
 
-	/* Test SYS_write:
-	char output3[] = "line core";
-	int fileno3 = syscall3(SYS_open, (uintptr_t)"LINENN", 0, 0);
-	printf("%d", syscall3(SYS_write, fileno3, (uintptr_t)output3, sizeof(output3)));
-	terminal_writestring(output3);
-	*/
+	/* Test SYS_write: char output3[] = "line core"; int fileno3 = syscall3(SYS_open,
+	   (uintptr_t)"LINENN", 0, 0); printf("%d", syscall3(SYS_write, fileno3, (uintptr_t)output3,
+	   sizeof(output3))); terminal_writestring(output3); */
 
-	/* Test SYS_size:
-	int fileno4 = syscall3(SYS_open, (uintptr_t)"README.MD", 0, 0);
-	printf("fileno4 = %d\n", fileno4);
-	printf("%d", syscall3(SYS_size, fileno4, 0, 0));
-	*/
+	/* Test SYS_size: int fileno4 = syscall3(SYS_open, (uintptr_t)"README.MD", 0, 0);
+	   printf("fileno4 = %d\n", fileno4); printf("%d", syscall3(SYS_size, fileno4, 0, 0)); */
 
 	for (;;) {
 		terminal_write_for_char(get_char());

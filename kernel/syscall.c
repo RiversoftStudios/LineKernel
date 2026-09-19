@@ -16,7 +16,7 @@ typedef int (*syscall_t)(long, long, long, long, long, long);
 
 DEFINECALL(print2, uintptr_t read)
 {
-	terminal_writestring((char*)read);
+	terminal_writestring((char *)read);
 	return 0;
 }
 
@@ -51,42 +51,42 @@ DEFINECALL(close, int fileno)
 
 DEFINECALL(open, uintptr_t filename)
 {
-	return open_fileno((const char*)filename);
+	return open_fileno((const char *)filename);
 }
 
 DEFINECALL(rename, uintptr_t oldpath, uintptr_t newpath)
 {
-	return rename_filepath((const char*)oldpath, (const char*)newpath);
+	return rename_filepath((const char *)oldpath, (const char *)newpath);
 }
 
 DEFINECALL(makedir, uintptr_t path)
 {
-	return makedir((const char*)path);
+	return makedir((const char *)path);
 }
 
 DEFINECALL(removedir, uintptr_t path)
 {
-	return removedir((const char*)path);
+	return removedir((const char *)path);
 }
 
 DEFINECALL(write, int fileno, uintptr_t buf, size_t nbyte)
 {
-	return write_fileno(fileno, (const void*)buf, nbyte);
+	return write_fileno(fileno, (const void *)buf, nbyte);
 }
 
 DEFINECALL(remove, uintptr_t filename)
 {
-	return removefile((const char*)filename);
+	return removefile((const char *)filename);
 }
 
 DEFINECALL(read, int fileno, uintptr_t buf, size_t count)
 {
-	return read_fileno(fileno, (void*)buf, count);
+	return read_fileno(fileno, (void *)buf, count);
 }
 
 DEFINECALL(list, uintptr_t path, uintptr_t fcontents, size_t count)
 {
-	return list_contents((const char*)path, (contents_t*)fcontents, count);
+	return list_contents((const char *)path, (contents_t *) fcontents, count);
 }
 
 DEFINECALL(size, int fileno)

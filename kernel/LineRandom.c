@@ -14,6 +14,7 @@ int rand_crand(void)
 	next = next * 1103515245 + 12345;
 	return (next / (RAND_MAX * 2 + 2)) % (RAND_MAX + 1);
 }
+
 /* https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf */
 
 randtype_t get_rand_type(void)
@@ -24,9 +25,9 @@ randtype_t get_rand_type(void)
 int rand(void)
 {
 	switch (get_rand_type()) {
-		case RAND_CRAND:
-			return rand_crand();
-		default:
-			return 0;
-		}
+	case RAND_CRAND:
+		return rand_crand();
+	default:
+		return 0;
+	}
 }

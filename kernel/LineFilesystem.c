@@ -12,10 +12,10 @@
 const char* filesystem_name(filesystemformat_t filesystem)
 {
 	switch (filesystem) {
-		case fat12:
-			return "FAT12";
-		default:
-			return "(none)";
+	case fat12:
+		return "FAT12";
+	default:
+		return "(none)";
 	}
 }
 
@@ -25,11 +25,11 @@ int check_filesystem(drivesformat_t drives, filesystemformat_t filesystem)
 {
 	switch (filesystem) {
 #ifdef CONFIG_FAT12
-		case fat12:
-			return detect_fat12(drives);
+	case fat12:
+		return detect_fat12(drives);
 #endif
-		default:
-			return -1;
+	default:
+		return -1;
 	}
 }
 
@@ -39,15 +39,17 @@ int check_filesystem(drivesformat_t drives, filesystemformat_t filesystem)
  ** @retval other Unknown error */
 int close_fileno(int fileno)
 {
-	if (has_working_drive != 1) return -32;
-	if (fileno == LINEOUT_FILENO) return -5;
+	if (has_working_drive != 1)
+		return -32;
+	if (fileno == LINEOUT_FILENO)
+		return -5;
 	switch (fs) {
 #ifdef CONFIG_FAT12
-		case fat12:
-			return fat12_close(fileno);
+	case fat12:
+		return fat12_close(fileno);
 #endif
-		default:
-			return -1;
+	default:
+		return -1;
 	}
 }
 
@@ -58,14 +60,15 @@ int close_fileno(int fileno)
  ** @retval other fileno */
 int open_fileno(const char* filename)
 {
-	if (has_working_drive != 1) return -32;
+	if (has_working_drive != 1)
+		return -32;
 	switch (fs) {
 #ifdef CONFIG_FAT12
-		case fat12:
-			return fat12_open(filename);
+	case fat12:
+		return fat12_open(filename);
 #endif
-		default:
-			return -1;
+	default:
+		return -1;
 	}
 }
 
@@ -75,14 +78,15 @@ int open_fileno(const char* filename)
  ** @retval other Unknown error */
 int rename_filepath(const char* oldpath, const char* newpath)
 {
-	if (has_working_drive != 1) return -32;
+	if (has_working_drive != 1)
+		return -32;
 	switch (fs) {
 #ifdef CONFIG_FAT12
-		case fat12:
-			return fat12_rename(oldpath, newpath);
+	case fat12:
+		return fat12_rename(oldpath, newpath);
 #endif
-		default:
-			return -1;
+	default:
+		return -1;
 	}
 }
 
@@ -92,14 +96,15 @@ int rename_filepath(const char* oldpath, const char* newpath)
  ** @retval other Unknown error */
 int makedir(const char* path)
 {
-	if (has_working_drive != 1) return -32;
+	if (has_working_drive != 1)
+		return -32;
 	switch (fs) {
 #ifdef CONFIG_FAT12
-		case fat12:
-			return fat12_makedir(path);
+	case fat12:
+		return fat12_makedir(path);
 #endif
-		default:
-			return -1;
+	default:
+		return -1;
 	}
 }
 
@@ -110,14 +115,15 @@ int makedir(const char* path)
  ** @retval other Unknown error */
 int removedir(const char* path)
 {
-	if (has_working_drive != 1) return -32;
+	if (has_working_drive != 1)
+		return -32;
 	switch (fs) {
 #ifdef CONFIG_FAT12
-		case fat12:
-			return fat12_removedir(path);
+	case fat12:
+		return fat12_removedir(path);
 #endif
-		default:
-			return -1;
+	default:
+		return -1;
 	}
 }
 
@@ -128,14 +134,15 @@ int removedir(const char* path)
  ** @retval other Unknown error */
 int removefile(const char* filename)
 {
-	if (has_working_drive != 1) return -32;
+	if (has_working_drive != 1)
+		return -32;
 	switch (fs) {
 #ifdef CONFIG_FAT12
-		case fat12:
-			return fat12_removefile(filename);
+	case fat12:
+		return fat12_removefile(filename);
 #endif
-		default:
-			return -1;
+	default:
+		return -1;
 	}
 }
 
@@ -146,17 +153,18 @@ int removefile(const char* filename)
 ptrdiff_t write_fileno(int fileno, const void* buf, size_t nbyte)
 {
 	if (fileno == LINEOUT_FILENO) {
-		terminal_write((const char*)buf, nbyte);
+		terminal_write((const char *)buf, nbyte);
 		return nbyte;
 	}
-	if (has_working_drive != 1) return -32;
+	if (has_working_drive != 1)
+		return -32;
 	switch (fs) {
 #ifdef CONFIG_FAT12
-		case fat12:
-			return fat12_write(fileno, buf, nbyte);
+	case fat12:
+		return fat12_write(fileno, buf, nbyte);
 #endif
-		default:
-			return -1;
+	default:
+		return -1;
 	}
 }
 
@@ -166,15 +174,17 @@ ptrdiff_t write_fileno(int fileno, const void* buf, size_t nbyte)
  ** @retval other Bytes read */
 ptrdiff_t read_fileno(int fileno, void* buf, size_t count)
 {
-	if (has_working_drive != 1) return -32;
-	if (fileno == LINEOUT_FILENO) return -5;
+	if (has_working_drive != 1)
+		return -32;
+	if (fileno == LINEOUT_FILENO)
+		return -5;
 	switch (fs) {
 #ifdef CONFIG_FAT12
-		case fat12:
-			return fat12_read(fileno, buf, count);
+	case fat12:
+		return fat12_read(fileno, buf, count);
 #endif
-		default:
-			return -1;
+	default:
+		return -1;
 	}
 }
 
@@ -184,14 +194,15 @@ ptrdiff_t read_fileno(int fileno, void* buf, size_t count)
  ** @retval other Unknown error */
 int list_contents(const char* path, contents_t* fcontents, size_t count)
 {
-	if (has_working_drive != 1) return -32;
+	if (has_working_drive != 1)
+		return -32;
 	switch (fs) {
 #ifdef CONFIG_FAT12
-		case fat12:
-			return fat12_listcontent(path, fcontents, count);
+	case fat12:
+		return fat12_listcontent(path, fcontents, count);
 #endif
-		default:
-			return -1;
+	default:
+		return -1;
 	}
 }
 
@@ -201,10 +212,10 @@ size_t get_size(int fileno)
 {
 	switch (fs) {
 #ifdef CONFIG_FAT12
-		case fat12:
-			return fat12_get_size(fileno);
+	case fat12:
+		return fat12_get_size(fileno);
 #endif
-		default:
-			return -1;
+	default:
+		return -1;
 	}
 }

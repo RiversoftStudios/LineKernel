@@ -12,8 +12,7 @@ void terminal_enable_cursor(void)
 #elif defined(CONFIG_CURSOR_FULL)
 		0,
 #endif
-		15
-	);
+		15);
 #endif
 }
 
@@ -119,7 +118,7 @@ void terminal_cls(void)
 	write_serial('[');
 	write_serial('2');
 	write_serial('J');
-	/* \033[1;1H*/
+	/* \033[1;1H */
 	write_serial('\033');
 	write_serial('[');
 	write_serial('1');
@@ -133,7 +132,7 @@ void terminal_cls(void)
 	sbi_putchar('[');
 	sbi_putchar('2');
 	sbi_putchar('J');
-	/* \033[1;1H*/
+	/* \033[1;1H */
 	sbi_putchar('\033');
 	sbi_putchar('[');
 	sbi_putchar('1');
