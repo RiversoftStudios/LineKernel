@@ -6,7 +6,7 @@
 
 .align 4
 syscall_handler:
-	# 1. Allocate context frame and save registers to avoid corrupting user state
+	# 1. Allocate context frame on kernel stack and save registers
 	addi sp, sp, -256
 	sd ra, 0(sp)
 	sd t0, 8(sp)
@@ -25,35 +25,34 @@ syscall_handler:
 	sd a0, 112(sp)
 	sd a7, 120(sp)
 
-	# 2. Check if the trap cause was an ecall (cause 8: U-mode, 9: S-mode, 11: M-mode)
-	csrr t0, mcause
+	# Save sstatus to preserve trap states
+	csrr t0, sstatus
+	sd t0, 128(sp)
+
+	# 2. Verify exception cause (U-mode ecall = 8)
+	csrr t0, scause
 	li t1, 8
 	beq t0, t1, .is_syscall
-	li t1, 9
-	beq t0, t1, .is_syscall
-	li t1, 11
-	beq t0, t1, .is_syscall
 
-	# Non-syscall traps: loop forever
+	# Non-syscall traps (page faults, interrupts, illegal instrs, etc.)
 	j .panic_trap
 
 .is_syscall:
-	# 3. Check boundaries (If a7 >= [number], jump to bad_syscall)
+	# 3. Boundary check (a7 holds syscall index)
 	# REPLACEMAXSYSCALL
 	li t0, 15
 	bgeu a7, t0, .bad_syscall
 
-	# 4. Invoke the C handler
+	# 4. Invoke the C handler from syscall_table
 	la t1, syscall_table
-	# Multiply index (a7) by 8 (64-bit pointers)
-	slli t2, a7, 3
+	slli t2, a7, 3 # Index * 8 (64-bit pointers)
 	add t2, t1, t2
-	# Load function pointer
-	ld t3, 0(t2)
-	# Call function (arguments are already in a0-a5)
+	ld t3, 0(t2) # Load function pointer
+
+	# Arguments (a0-a5) are already set up according to calling convention
 	jalr ra, t3
 
-	# 5. Save the C return value (in a0) to the stack frame slot for a0
+	# Save C return value (returned in a0) into stack slot for restoring to user a0
 	sd a0, 112(sp)
 	j .finish
 
@@ -62,13 +61,15 @@ syscall_handler:
 	sd a0, 112(sp)
 
 .finish:
-	# 6. CRITICAL: Advance the exception program counter (mepc) by 4 bytes.
-	# The PC saved during ecall points to the ecall instruction itself.
-	csrr t0, mepc
+	# 5. Advance sepc past the 4-byte ecall instruction
+	csrr t0, sepc
 	addi t0, t0, 4
-	csrw mepc, t0
+	csrw sepc, t0
 
-	# 7. Restore registers and return via mret
+	# 6. Restore kernel/user registers and return to S/U mode
+	ld t0, 128(sp)
+	csrw sstatus, t0
+
 	ld ra, 0(sp)
 	ld t0, 8(sp)
 	ld t1, 16(sp)
@@ -83,11 +84,11 @@ syscall_handler:
 	ld a4, 88(sp)
 	ld a5, 96(sp)
 	ld a6, 104(sp)
-	# Restores C return value to user a0
-	ld a0, 112(sp)
+	ld a0, 112(sp) # Loads the return value into user a0
 	ld a7, 120(sp)
 	addi sp, sp, 256
-	mret
+
+	sret # Return from supervisor trap
 
 .panic_trap:
-1:	j 1b
+1: j 1b

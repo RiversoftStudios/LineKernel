@@ -8,8 +8,8 @@
 #ifdef CONFIG_SERIAL_CONSOLE
 #include "serial.h"
 #endif
-#ifdef CONFIG_UART
-#include "uart.h"
+#ifdef ARCH_riscv64
+#include "sbi.h"
 #endif
 #include "str.h"
 
@@ -36,16 +36,16 @@ void terminal_setcolor(linecolor_t fg_color, linecolor_t bg_color)
 #ifdef CONFIG_SERIAL_CONSOLE
 		write_serial(ansi_fg_colors[fg_color][i]);
 #endif
-#ifdef CONFIG_UART
-		uart_putchar(ansi_fg_colors[fg_color][i]);
+#ifdef ARCH_riscv64
+		sbi_putchar(ansi_fg_colors[fg_color][i]);
 #endif
 	}
 	for (size_t i = 0; i < strlen(ansi_bg_colors[bg_color]); i++) {
 #ifdef CONFIG_SERIAL_CONSOLE
 		write_serial(ansi_bg_colors[bg_color][i]);
 #endif
-#ifdef CONFIG_UART
-		uart_putchar(ansi_bg_colors[bg_color][i]);
+#ifdef ARCH_riscv64
+		sbi_putchar(ansi_bg_colors[bg_color][i]);
 #endif
 	}
 }

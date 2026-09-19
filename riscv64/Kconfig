@@ -1,17 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: Copyright (C) 2026 Riversoft Studios
 
-menu "Console"
-    depends on CONSOLE
-
-config UART
-    bool "uart console"
-    default y
-    help
-      Enable UART console? This works similar to serial.
-
-endmenu
-
 choice
     prompt "Machine"
     default VIRT_MACHINE

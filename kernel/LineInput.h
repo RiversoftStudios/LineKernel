@@ -14,8 +14,8 @@
 #include "serial.h"
 #endif
 
-#ifdef CONFIG_UART
-#include "uart.h"
+#ifdef ARCH_riscv64
+#include "sbi.h"
 #endif
 
 char get_char(void);

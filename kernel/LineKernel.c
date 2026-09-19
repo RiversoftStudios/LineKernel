@@ -18,8 +18,8 @@
 #ifdef CONFIG_SERIAL_CONSOLE
 #include "serial.h"
 #endif
-#ifdef CONFIG_UART
-#include "uart.h"
+#ifdef ARCH_riscv64
+#include "sbi.h"
 #endif
 
 #ifdef ARCH_i386
@@ -128,12 +128,12 @@ void kernel_main(void)
 	terminal_writestring("Core services initialized.\n\n");
 	we_are_running();
 
-	// syscall3(SYS_termclear, 0, 0, 0);
-	// syscall3(SYS_termcolor, COLOR_WHITE, COLOR_BLUE, 0);
-	// syscall3(SYS_print2, (uintptr_t)"LineKernel!\n", 0, 0);
-	// syscall3(SYS_termscolor, 0, 0, 0);
-	// syscall3(SYS_termcursor, 3, 3, 0);
-	// syscall3(SYS_write, 2, (uintptr_t)"LineKernel!", 4);
+	/* syscall3(SYS_termclear, 0, 0, 0);
+	syscall3(SYS_termcolor, COLOR_WHITE, COLOR_BLUE, 0);
+	syscall3(SYS_print2, (uintptr_t)"LineKernel!\n", 0, 0);
+	syscall3(SYS_termscolor, 0, 0, 0);
+	syscall3(SYS_termcursor, 3, 3, 0);
+	syscall3(SYS_write, 2, (uintptr_t)"LineKernel!", 4); */
 
 	/* Test SYS_list:
 	contents_t filelist[5];

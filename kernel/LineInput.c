@@ -3,6 +3,8 @@
 
 #include "LineInput.h"
 
+/* TODO: Some of this stuff probably needs fixing to work better on Real Hardware. */
+
 char get_char(void)
 {
 	char c;
@@ -26,14 +28,12 @@ char get_char(void)
 	}
 #endif
 
-#ifdef CONFIG_UART
-	ready = get_uart_input();
-	if (ready != 0) {
-		c = ready;
-		if (c == '\r')
-			c = '\n';			// Workaround for newlines
-		return c;
-	}
+#ifdef ARCH_riscv64
+	while ((ready = sbi_getchar()) == -1); /* Scary, but does work! */
+	c = ready;
+	if (c == '\r')
+		c = '\n';			/* Workaround for newlines */
+	return c;
 #endif
 
 	return '\0';

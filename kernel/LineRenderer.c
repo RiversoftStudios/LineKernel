@@ -33,14 +33,14 @@ void terminal_update_cursor(int x, int y)
 	terminal_writeintcustom(x + 1, write_serial);
 	write_serial('H');
 #endif
-#ifdef CONFIG_UART
+#ifdef ARCH_riscv64
 	/* \033[<Y>;<X>H */
-	uart_putchar('\033');
-	uart_putchar('[');
-	terminal_writeintcustom(y + 1, uart_putchar);
-	uart_putchar(';');
-	terminal_writeintcustom(x + 1, uart_putchar);
-	uart_putchar('H');
+	sbi_putchar('\033');
+	sbi_putchar('[');
+	terminal_writeintcustom(y + 1, sbi_putchar);
+	sbi_putchar(';');
+	terminal_writeintcustom(x + 1, sbi_putchar);
+	sbi_putchar('H');
 #endif
 }
 
@@ -51,9 +51,6 @@ void terminal_initialize(void)
 #endif
 #ifdef CONFIG_SERIAL_CONSOLE
 	init_serial();
-#endif
-#ifdef CONFIG_UART
-	uart_init();
 #endif
 	terminal_enable_cursor();
 }
@@ -66,8 +63,8 @@ void terminal_putchar(char c)
 #ifdef CONFIG_SERIAL_CONSOLE
 	write_serial(c);
 #endif
-#ifdef CONFIG_UART
-	uart_putchar(c);
+#ifdef ARCH_riscv64
+	sbi_putchar(c);
 #endif
 }
 
@@ -80,9 +77,9 @@ void terminal_newline(void)
 	write_serial('\r');
 	write_serial('\n');
 #endif
-#ifdef CONFIG_UART
-	uart_putchar('\r');
-	uart_putchar('\n');
+#ifdef ARCH_riscv64
+	sbi_putchar('\r');
+	sbi_putchar('\n');
 #endif
 }
 
@@ -96,10 +93,10 @@ void terminal_backspace(void)
 	write_serial(' ');
 	write_serial('\b');
 #endif
-#ifdef CONFIG_UART
-	uart_putchar('\b');
-	uart_putchar(' ');
-	uart_putchar('\b');
+#ifdef ARCH_riscv64
+	sbi_putchar('\b');
+	sbi_putchar(' ');
+	sbi_putchar('\b');
 #endif
 }
 
@@ -130,19 +127,19 @@ void terminal_cls(void)
 	write_serial('1');
 	write_serial('H');
 #endif
-#ifdef CONFIG_UART
+#ifdef ARCH_riscv64
 	/* \033[2J */
-	uart_putchar('\033');
-	uart_putchar('[');
-	uart_putchar('2');
-	uart_putchar('J');
+	sbi_putchar('\033');
+	sbi_putchar('[');
+	sbi_putchar('2');
+	sbi_putchar('J');
 	/* \033[1;1H*/
-	uart_putchar('\033');
-	uart_putchar('[');
-	uart_putchar('1');
-	uart_putchar(';');
-	uart_putchar('1');
-	uart_putchar('H');
+	sbi_putchar('\033');
+	sbi_putchar('[');
+	sbi_putchar('1');
+	sbi_putchar(';');
+	sbi_putchar('1');
+	sbi_putchar('H');
 #endif
 }
 
