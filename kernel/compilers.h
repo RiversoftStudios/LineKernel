@@ -8,23 +8,23 @@
 #include <stdint.h>
 
 #if defined(__GNUC__) || defined(__clang__)
-	#define ATTRIBUTE_NORETURN __attribute__((noreturn))
+#define ATTRIBUTE_NORETURN __attribute__((noreturn))
 #elif defined(_MSC_VER)
-	#define ATTRIBUTE_NORETURN __declspec(noreturn)
+#define ATTRIBUTE_NORETURN __declspec(noreturn)
 #elif __STDC_VERSION__ >= 201112L
-	#define ATTRIBUTE_NORETURN _Noreturn
+#define ATTRIBUTE_NORETURN _Noreturn
 #else
-	#define ATTRIBUTE_NORETURN
+#define ATTRIBUTE_NORETURN
 #endif
 
 #if defined(__x86_64__) || defined(__amd64__)
-	#define CPU_BITS 64
+#define CPU_BITS 64
 #elif defined(__i386__) || defined(_M_IX86)
-	#define CPU_BITS 32
+#define CPU_BITS 32
 #elif defined(__riscv)
-	#define CPU_BITS __riscv_xlen
+#define CPU_BITS __riscv_xlen
 #else
-	#error "Unsupported architecture"
+#error "Unsupported architecture"
 #endif
 
 #endif

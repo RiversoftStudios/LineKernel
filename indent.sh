@@ -15,6 +15,7 @@ lineindent()
 
 lineindent i386
 lineindent x86
-lineindent x86_64
+# lineindent x86_64 # No C or H files in x86_64
 lineindent riscv64
+lineindent kernel
 lineindentf tools/*.c

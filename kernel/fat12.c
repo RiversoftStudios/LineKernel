@@ -29,7 +29,7 @@ int detect_fat12(drivesformat_t drive_id)
 	uint8_t sector[512];
 
 	/* Attempt to read sector 0 */
-	if (read_drive_sector(drive_id, 0, (uint32_t*)sector) < 0) {
+	if (read_drive_sector(drive_id, 0, (uint32_t *) sector) < 0) {
 		printf("No drive detected or failed to read sector 0.\n");
 		return -1;				/* No drive or read error */
 	}
@@ -81,9 +81,12 @@ int detect_fat12(drivesformat_t drive_id)
 		fat12_geom.sectors_per_fat = bpb->sectors_per_fat;
 
 		fat12_geom.fat_start_sector = bpb->reserved_sectors;
-		fat12_geom.root_dir_start_sector = bpb->reserved_sectors + (bpb->num_fats * bpb->sectors_per_fat);
-		fat12_geom.root_dir_sectors = ((bpb->root_dir_entries * 32) + bpb->bytes_per_sector - 1) / bpb->bytes_per_sector;
-		fat12_geom.data_start_sector = fat12_geom.root_dir_start_sector + fat12_geom.root_dir_sectors;
+		fat12_geom.root_dir_start_sector =
+			bpb->reserved_sectors + (bpb->num_fats * bpb->sectors_per_fat);
+		fat12_geom.root_dir_sectors =
+			((bpb->root_dir_entries * 32) + bpb->bytes_per_sector - 1) / bpb->bytes_per_sector;
+		fat12_geom.data_start_sector =
+			fat12_geom.root_dir_start_sector + fat12_geom.root_dir_sectors;
 
 		printf("Valid FAT12 filesystem detected!\n");
 		printf("  OEM ID:           %s\n", oem);
@@ -101,32 +104,35 @@ int detect_fat12(drivesformat_t drive_id)
 	return 0;
 }
 
-static void read_fat12_fat_bytes(uint32_t byte_offset, uint8_t *bytes, int count)
+static void read_fat12_fat_bytes(uint32_t byte_offset, uint8_t* bytes, int count)
 {
 	for (int i = 0; i < count; i++) {
 		uint32_t bo = byte_offset + i;
 		uint32_t sector = fat12_geom.fat_start_sector + (bo / 512);
 		uint32_t offset_in_sector = bo % 512;
 		uint8_t sec_buf[512];
-		read_drive_sector(drive, sector, (uint32_t*)sec_buf);
+
+		read_drive_sector(drive, sector, (uint32_t *) sec_buf);
 		bytes[i] = sec_buf[offset_in_sector];
 	}
 }
 
-static void write_fat12_fat_bytes(uint32_t byte_offset, const uint8_t *bytes, int count)
+static void write_fat12_fat_bytes(uint32_t byte_offset, const uint8_t* bytes, int count)
 {
 	for (int i = 0; i < count; i++) {
 		uint32_t bo = byte_offset + i;
 		uint32_t sector = fat12_geom.fat_start_sector + (bo / 512);
 		uint32_t offset_in_sector = bo % 512;
 		uint8_t sec_buf[512];
-		read_drive_sector(drive, sector, (uint32_t*)sec_buf);
+
+		read_drive_sector(drive, sector, (uint32_t *) sec_buf);
 		sec_buf[offset_in_sector] = bytes[i];
-		write_drive_sector(drive, sector, (const uint32_t*)sec_buf);
-		
+		write_drive_sector(drive, sector, (const uint32_t *)sec_buf);
+
 		for (int f = 1; f < fat12_geom.num_fats; f++) {
 			uint32_t dup_sector = sector + f * fat12_geom.sectors_per_fat;
-			write_drive_sector(drive, dup_sector, (const uint32_t*)sec_buf);
+
+			write_drive_sector(drive, dup_sector, (const uint32_t *)sec_buf);
 		}
 	}
 }
@@ -135,8 +141,10 @@ static uint16_t fat12_read_fat_entry(uint32_t cluster)
 {
 	uint32_t byte_offset = (cluster * 3) / 2;
 	uint8_t bytes[2];
+
 	read_fat12_fat_bytes(byte_offset, bytes, 2);
 	uint16_t entry = bytes[0] | (bytes[1] << 8);
+
 	if (cluster & 1) {
 		return entry >> 4;
 	} else {
@@ -148,8 +156,10 @@ static void fat12_write_fat_entry(uint32_t cluster, uint16_t value)
 {
 	uint32_t byte_offset = (cluster * 3) / 2;
 	uint8_t bytes[2];
+
 	read_fat12_fat_bytes(byte_offset, bytes, 2);
 	uint16_t entry = bytes[0] | (bytes[1] << 8);
+
 	if (cluster & 1) {
 		entry = (entry & 0x000F) | (value << 4);
 	} else {
@@ -177,14 +187,17 @@ static int fat12_allocate_cluster(uint32_t current_cluster)
 static void fat12_free_cluster_chain(uint32_t start_cluster)
 {
 	uint32_t c = start_cluster;
+
 	while (c >= 2 && c < 0x0FF8) {
 		uint32_t next = fat12_read_fat_entry(c);
+
 		fat12_write_fat_entry(c, 0x000);
 		c = next;
 	}
 }
 
-static int fat12_read_dir_entry(uint32_t dir_cluster, uint32_t entry_index, struct fat12_dir_entry *out_entry)
+static int fat12_read_dir_entry(uint32_t dir_cluster, uint32_t entry_index,
+	struct fat12_dir_entry* out_entry)
 {
 	if (dir_cluster == 0) {
 		if (entry_index >= fat12_geom.root_dir_entries) {
@@ -194,7 +207,8 @@ static int fat12_read_dir_entry(uint32_t dir_cluster, uint32_t entry_index, stru
 		uint32_t sector = fat12_geom.root_dir_start_sector + (byte_offset / 512);
 		uint32_t offset_in_sector = byte_offset % 512;
 		uint8_t sec_buf[512];
-		if (read_drive_sector(drive, sector, (uint32_t*)sec_buf) < 0) {
+
+		if (read_drive_sector(drive, sector, (uint32_t *) sec_buf) < 0) {
 			return -1;
 		}
 		memcpy(out_entry, sec_buf + offset_in_sector, 32);
@@ -205,6 +219,7 @@ static int fat12_read_dir_entry(uint32_t dir_cluster, uint32_t entry_index, stru
 		uint32_t entry_offset_in_cluster = entry_index % entries_per_cluster;
 
 		uint32_t c = dir_cluster;
+
 		for (uint32_t i = 0; i < target_cluster_index; i++) {
 			c = fat12_read_fat_entry(c);
 			if (c < 2 || c >= 0x0FF8) {
@@ -216,9 +231,11 @@ static int fat12_read_dir_entry(uint32_t dir_cluster, uint32_t entry_index, stru
 		uint32_t sector_offset = byte_offset / 512;
 		uint32_t offset_in_sector = byte_offset % 512;
 
-		uint32_t sector = fat12_geom.data_start_sector + (c - 2) * fat12_geom.sectors_per_cluster + sector_offset;
+		uint32_t sector =
+			fat12_geom.data_start_sector + (c - 2) * fat12_geom.sectors_per_cluster + sector_offset;
 		uint8_t sec_buf[512];
-		if (read_drive_sector(drive, sector, (uint32_t*)sec_buf) < 0) {
+
+		if (read_drive_sector(drive, sector, (uint32_t *) sec_buf) < 0) {
 			return -1;
 		}
 		memcpy(out_entry, sec_buf + offset_in_sector, 32);
@@ -226,7 +243,8 @@ static int fat12_read_dir_entry(uint32_t dir_cluster, uint32_t entry_index, stru
 	}
 }
 
-static int fat12_write_dir_entry(uint32_t dir_cluster, uint32_t entry_index, const struct fat12_dir_entry *in_entry)
+static int fat12_write_dir_entry(uint32_t dir_cluster, uint32_t entry_index,
+	const struct fat12_dir_entry* in_entry)
 {
 	if (dir_cluster == 0) {
 		if (entry_index >= fat12_geom.root_dir_entries) {
@@ -236,11 +254,12 @@ static int fat12_write_dir_entry(uint32_t dir_cluster, uint32_t entry_index, con
 		uint32_t sector = fat12_geom.root_dir_start_sector + (byte_offset / 512);
 		uint32_t offset_in_sector = byte_offset % 512;
 		uint8_t sec_buf[512];
-		if (read_drive_sector(drive, sector, (uint32_t*)sec_buf) < 0) {
+
+		if (read_drive_sector(drive, sector, (uint32_t *) sec_buf) < 0) {
 			return -1;
 		}
 		memcpy(sec_buf + offset_in_sector, in_entry, 32);
-		if (write_drive_sector(drive, sector, (const uint32_t*)sec_buf) < 0) {
+		if (write_drive_sector(drive, sector, (const uint32_t *)sec_buf) < 0) {
 			return -1;
 		}
 		return 0;
@@ -251,19 +270,24 @@ static int fat12_write_dir_entry(uint32_t dir_cluster, uint32_t entry_index, con
 
 		uint32_t c = dir_cluster;
 		uint32_t prev_c = 0;
+
 		for (uint32_t i = 0; i < target_cluster_index; i++) {
 			prev_c = c;
 			c = fat12_read_fat_entry(c);
 			if (c < 2 || c >= 0x0FF8) {
 				int new_c = fat12_allocate_cluster(prev_c);
+
 				if (new_c < 0) {
 					return -1;
 				}
 				uint8_t zero_buf[512];
+
 				memset(zero_buf, 0, 512);
 				for (uint32_t s = 0; s < fat12_geom.sectors_per_cluster; s++) {
-					uint32_t sector = fat12_geom.data_start_sector + (new_c - 2) * fat12_geom.sectors_per_cluster + s;
-					write_drive_sector(drive, sector, (const uint32_t*)zero_buf);
+					uint32_t sector =
+						fat12_geom.data_start_sector + (new_c -
+						2) * fat12_geom.sectors_per_cluster + s;
+					write_drive_sector(drive, sector, (const uint32_t *)zero_buf);
 				}
 				c = new_c;
 			}
@@ -273,28 +297,35 @@ static int fat12_write_dir_entry(uint32_t dir_cluster, uint32_t entry_index, con
 		uint32_t sector_offset = byte_offset / 512;
 		uint32_t offset_in_sector = byte_offset % 512;
 
-		uint32_t sector = fat12_geom.data_start_sector + (c - 2) * fat12_geom.sectors_per_cluster + sector_offset;
+		uint32_t sector =
+			fat12_geom.data_start_sector + (c - 2) * fat12_geom.sectors_per_cluster + sector_offset;
 		uint8_t sec_buf[512];
-		if (read_drive_sector(drive, sector, (uint32_t*)sec_buf) < 0) {
+
+		if (read_drive_sector(drive, sector, (uint32_t *) sec_buf) < 0) {
 			return -1;
 		}
 		memcpy(sec_buf + offset_in_sector, in_entry, 32);
-		if (write_drive_sector(drive, sector, (const uint32_t*)sec_buf) < 0) {
+		if (write_drive_sector(drive, sector, (const uint32_t *)sec_buf) < 0) {
 			return -1;
 		}
 		return 0;
 	}
 }
 
-static void to_fat12_name(const char *src, char *dest_name, char *dest_ext)
+static void to_fat12_name(const char* src, char* dest_name, char* dest_ext)
 {
-	for (int i = 0; i < 8; i++) dest_name[i] = ' ';
-	for (int i = 0; i < 3; i++) dest_ext[i] = ' ';
+	for (int i = 0; i < 8; i++)
+		dest_name[i] = ' ';
+	for (int i = 0; i < 3; i++)
+		dest_ext[i] = ' ';
 
 	int i = 0;
+
 	while (src[i] != '\0' && src[i] != '.' && i < 8) {
 		char c = src[i];
-		if (c >= 'a' && c <= 'z') c = c - 'a' + 'A';
+
+		if (c >= 'a' && c <= 'z')
+			c = c - 'a' + 'A';
 		dest_name[i] = c;
 		i++;
 	}
@@ -306,9 +337,12 @@ static void to_fat12_name(const char *src, char *dest_name, char *dest_ext)
 	if (src[i] == '.') {
 		i++;
 		int j = 0;
+
 		while (src[i] != '\0' && j < 3) {
 			char c = src[i];
-			if (c >= 'a' && c <= 'z') c = c - 'a' + 'A';
+
+			if (c >= 'a' && c <= 'z')
+				c = c - 'a' + 'A';
 			dest_ext[j] = c;
 			i++;
 			j++;
@@ -316,18 +350,20 @@ static void to_fat12_name(const char *src, char *dest_name, char *dest_ext)
 	}
 }
 
-static int match_fat12_name(const struct fat12_dir_entry *entry, const char *name, const char *ext)
+static int match_fat12_name(const struct fat12_dir_entry* entry, const char* name, const char* ext)
 {
 	for (int i = 0; i < 8; i++) {
-		if (entry->name[i] != name[i]) return 0;
+		if (entry->name[i] != name[i])
+			return 0;
 	}
 	for (int i = 0; i < 3; i++) {
-		if (entry->ext[i] != ext[i]) return 0;
+		if (entry->ext[i] != ext[i])
+			return 0;
 	}
 	return 1;
 }
 
-static int get_next_path_component(const char *path, int *offset, char *component)
+static int get_next_path_component(const char* path, int* offset, char* component)
 {
 	while (path[*offset] == '/') {
 		(*offset)++;
@@ -336,6 +372,7 @@ static int get_next_path_component(const char *path, int *offset, char *componen
 		return 0;
 	}
 	int len = 0;
+
 	while (path[*offset] != '\0' && path[*offset] != '/') {
 		if (len < 255) {
 			component[len++] = path[*offset];
@@ -346,7 +383,8 @@ static int get_next_path_component(const char *path, int *offset, char *componen
 	return 1;
 }
 
-static int fat12_find_entry(const char *path, struct fat12_dir_entry *out_entry, uint32_t *out_entry_index, uint32_t *out_dir_cluster)
+static int fat12_find_entry(const char* path, struct fat12_dir_entry* out_entry,
+	uint32_t* out_entry_index, uint32_t* out_dir_cluster)
 {
 	uint32_t dir_cluster = 0;
 	int offset = 0;
@@ -359,11 +397,13 @@ static int fat12_find_entry(const char *path, struct fat12_dir_entry *out_entry,
 	while (1) {
 		char formatted_name[8];
 		char formatted_ext[3];
+
 		to_fat12_name(component, formatted_name, formatted_ext);
 
 		int found = 0;
 		struct fat12_dir_entry entry;
 		uint32_t entry_idx = 0;
+
 		while (1) {
 			if (fat12_read_dir_entry(dir_cluster, entry_idx, &entry) < 0) {
 				break;
@@ -402,15 +442,19 @@ static int fat12_find_entry(const char *path, struct fat12_dir_entry *out_entry,
 			offset = next_offset;
 			strlcpy(component, next_component, sizeof(component));
 		} else {
-			if (out_entry) *out_entry = entry;
-			if (out_entry_index) *out_entry_index = entry_idx;
-			if (out_dir_cluster) *out_dir_cluster = dir_cluster;
+			if (out_entry)
+				*out_entry = entry;
+			if (out_entry_index)
+				*out_entry_index = entry_idx;
+			if (out_dir_cluster)
+				*out_dir_cluster = dir_cluster;
 			return 0;
 		}
 	}
 }
 
-static int fat12_resolve_parent(const char *path, uint32_t *out_parent_cluster, char *final_name, char *final_ext)
+static int fat12_resolve_parent(const char* path, uint32_t* out_parent_cluster, char* final_name,
+	char* final_ext)
 {
 	uint32_t dir_cluster = 0;
 	int offset = 0;
@@ -428,11 +472,13 @@ static int fat12_resolve_parent(const char *path, uint32_t *out_parent_cluster, 
 		if (has_more) {
 			char formatted_name[8];
 			char formatted_ext[3];
+
 			to_fat12_name(component, formatted_name, formatted_ext);
 
 			int found = 0;
 			struct fat12_dir_entry entry;
 			uint32_t entry_idx = 0;
+
 			while (1) {
 				if (fat12_read_dir_entry(dir_cluster, entry_idx, &entry) < 0) {
 					break;
@@ -472,7 +518,8 @@ static int fat12_resolve_parent(const char *path, uint32_t *out_parent_cluster, 
 	}
 }
 
-static int fat12_create_entry(uint32_t parent_cluster, const char *name, const char *ext, uint8_t attr, uint32_t first_cluster, uint32_t size, struct fat12_dir_entry *out_entry)
+static int fat12_create_entry(uint32_t parent_cluster, const char* name, const char* ext,
+	uint8_t attr, uint32_t first_cluster, uint32_t size, struct fat12_dir_entry* out_entry)
 {
 	struct fat12_dir_entry entry;
 	uint32_t entry_idx = 0;
@@ -496,14 +543,19 @@ static int fat12_create_entry(uint32_t parent_cluster, const char *name, const c
 	if (slot_found) {
 		struct fat12_dir_entry check_entry;
 		int was_end = 0;
-		if (fat12_read_dir_entry(parent_cluster, entry_idx, &check_entry) == 0 && check_entry.name[0] == 0x00) {
+
+		if (fat12_read_dir_entry(parent_cluster, entry_idx, &check_entry) == 0
+			&& check_entry.name[0] == 0x00) {
 			was_end = 1;
 		}
 
 		struct fat12_dir_entry new_entry;
+
 		memset(&new_entry, 0, sizeof(new_entry));
-		for (int i = 0; i < 8; i++) new_entry.name[i] = name[i];
-		for (int i = 0; i < 3; i++) new_entry.ext[i] = ext[i];
+		for (int i = 0; i < 8; i++)
+			new_entry.name[i] = name[i];
+		for (int i = 0; i < 3; i++)
+			new_entry.ext[i] = ext[i];
 		new_entry.attr = attr;
 		new_entry.first_cluster_low = first_cluster;
 		new_entry.file_size = size;
@@ -514,10 +566,12 @@ static int fat12_create_entry(uint32_t parent_cluster, const char *name, const c
 
 		if (was_end) {
 			struct fat12_dir_entry end_entry;
+
 			memset(&end_entry, 0, sizeof(end_entry));
 			fat12_write_dir_entry(parent_cluster, entry_idx + 1, &end_entry);
 		}
-		if (out_entry) *out_entry = new_entry;
+		if (out_entry)
+			*out_entry = new_entry;
 		return entry_idx;
 	}
 	return -1;
@@ -526,8 +580,10 @@ static int fat12_create_entry(uint32_t parent_cluster, const char *name, const c
 int fat12_open(const char* filename)
 {
 	int fd = -1;
+
 	for (int i = 0; i < MAX_OPEN_FILES; i++) {
 		int candidate_fd = i + 3;
+
 		if (!open_files[i].used) {
 			fd = candidate_fd;
 			break;
@@ -547,10 +603,12 @@ int fat12_open(const char* filename)
 		}
 	} else {
 		char name[8], ext[3];
+
 		if (fat12_resolve_parent(filename, &parent_cluster, name, ext) != 0) {
 			return -9;
 		}
 		int idx = fat12_create_entry(parent_cluster, name, ext, 0, 0, 0, &entry);
+
 		if (idx < 0) {
 			return -1;
 		}
@@ -558,6 +616,7 @@ int fat12_open(const char* filename)
 	}
 
 	int index = fd - 3;
+
 	open_files[index].used = 1;
 	strlcpy(open_files[index].path, filename, sizeof(open_files[index].path));
 	open_files[index].first_cluster = entry.first_cluster_low;
@@ -573,6 +632,7 @@ int fat12_open(const char* filename)
 int fat12_close(int fileno)
 {
 	int index = fileno - 3;
+
 	if (index < 0 || index >= MAX_OPEN_FILES || !open_files[index].used) {
 		return -5;
 	}
@@ -583,11 +643,12 @@ int fat12_close(int fileno)
 int fat12_write(int fileno, const void* buf, size_t nbyte)
 {
 	int index = fileno - 3;
+
 	if (index < 0 || index >= MAX_OPEN_FILES || !open_files[index].used) {
 		return -5;
 	}
 
-	const uint8_t *src = (const uint8_t *)buf;
+	const uint8_t* src = (const uint8_t *)buf;
 	size_t bytes_written = 0;
 
 	uint32_t cluster_size = fat12_geom.sectors_per_cluster * 512;
@@ -599,24 +660,31 @@ int fat12_write(int fileno, const void* buf, size_t nbyte)
 
 		if (open_files[index].first_cluster == 0) {
 			int new_c = fat12_allocate_cluster(0);
+
 			if (new_c < 0) {
 				return -1;
 			}
 			open_files[index].first_cluster = new_c;
 
 			struct fat12_dir_entry entry;
-			if (fat12_read_dir_entry(open_files[index].parent_cluster, open_files[index].entry_idx, &entry) == 0) {
+
+			if (fat12_read_dir_entry(open_files[index].parent_cluster, open_files[index].entry_idx,
+					&entry) == 0) {
 				entry.first_cluster_low = new_c;
-				fat12_write_dir_entry(open_files[index].parent_cluster, open_files[index].entry_idx, &entry);
+				fat12_write_dir_entry(open_files[index].parent_cluster, open_files[index].entry_idx,
+					&entry);
 			}
 		}
 
 		uint32_t c = open_files[index].first_cluster;
 		int ok = 1;
+
 		for (uint32_t i = 0; i < cluster_index; i++) {
 			uint32_t next = fat12_read_fat_entry(c);
+
 			if (next < 2 || next >= 0x0FF8) {
 				int new_c = fat12_allocate_cluster(c);
+
 				if (new_c < 0) {
 					ok = 0;
 					break;
@@ -631,15 +699,18 @@ int fat12_write(int fileno, const void* buf, size_t nbyte)
 
 		uint32_t sector_offset = offset_in_cluster / 512;
 		uint32_t offset_in_sector = offset_in_cluster % 512;
-		uint32_t sector = fat12_geom.data_start_sector + (c - 2) * fat12_geom.sectors_per_cluster + sector_offset;
+		uint32_t sector =
+			fat12_geom.data_start_sector + (c - 2) * fat12_geom.sectors_per_cluster + sector_offset;
 
 		uint8_t sec_buf[512];
-		if (read_drive_sector(drive, sector, (uint32_t*)sec_buf) < 0) {
+
+		if (read_drive_sector(drive, sector, (uint32_t *) sec_buf) < 0) {
 			return -1;
 		}
 
 		uint32_t space_in_sector = 512 - offset_in_sector;
 		uint32_t to_write = nbyte - bytes_written;
+
 		if (to_write > space_in_sector) {
 			to_write = space_in_sector;
 		}
@@ -648,7 +719,7 @@ int fat12_write(int fileno, const void* buf, size_t nbyte)
 			sec_buf[offset_in_sector + i] = src[bytes_written + i];
 		}
 
-		if (write_drive_sector(drive, sector, (const uint32_t*)sec_buf) < 0) {
+		if (write_drive_sector(drive, sector, (const uint32_t *)sec_buf) < 0) {
 			return -1;
 		}
 
@@ -658,9 +729,12 @@ int fat12_write(int fileno, const void* buf, size_t nbyte)
 			open_files[index].file_size = open_files[index].cursor;
 
 			struct fat12_dir_entry entry;
-			if (fat12_read_dir_entry(open_files[index].parent_cluster, open_files[index].entry_idx, &entry) == 0) {
+
+			if (fat12_read_dir_entry(open_files[index].parent_cluster, open_files[index].entry_idx,
+					&entry) == 0) {
 				entry.file_size = open_files[index].file_size;
-				fat12_write_dir_entry(open_files[index].parent_cluster, open_files[index].entry_idx, &entry);
+				fat12_write_dir_entry(open_files[index].parent_cluster, open_files[index].entry_idx,
+					&entry);
 			}
 		}
 	}
@@ -678,23 +752,28 @@ int fat12_rename(const char* oldpath, const char* newpath)
 	}
 
 	struct fat12_dir_entry existing_entry;
+
 	if (fat12_find_entry(newpath, &existing_entry, NULL, NULL) == 0) {
 		return -1;
 	}
 
 	uint32_t new_parent_cluster;
 	char new_name[8], new_ext[3];
+
 	if (fat12_resolve_parent(newpath, &new_parent_cluster, new_name, new_ext) != 0) {
 		return -9;
 	}
 
-	int new_entry_idx = fat12_create_entry(new_parent_cluster, new_name, new_ext, old_entry.attr, old_entry.first_cluster_low, old_entry.file_size, NULL);
+	int new_entry_idx = fat12_create_entry(new_parent_cluster, new_name, new_ext, old_entry.attr,
+		old_entry.first_cluster_low, old_entry.file_size, NULL);
+
 	if (new_entry_idx < 0) {
 		return -1;
 	}
 
 	if ((old_entry.attr & 0x10) && old_entry.first_cluster_low >= 2) {
 		struct fat12_dir_entry dotdot;
+
 		if (fat12_read_dir_entry(old_entry.first_cluster_low, 1, &dotdot) == 0) {
 			dotdot.first_cluster_low = new_parent_cluster;
 			fat12_write_dir_entry(old_entry.first_cluster_low, 1, &dotdot);
@@ -739,6 +818,7 @@ static void fat12_init_dir_cluster(uint32_t cluster, uint32_t parent_cluster)
 	fat12_write_dir_entry(cluster, 1, &dotdot);
 
 	struct fat12_dir_entry end_entry;
+
 	memset(&end_entry, 0, sizeof(end_entry));
 	fat12_write_dir_entry(cluster, 2, &end_entry);
 }
@@ -747,16 +827,19 @@ int fat12_makedir(const char* path)
 {
 	uint32_t parent_cluster;
 	char name[8], ext[3];
+
 	if (fat12_resolve_parent(path, &parent_cluster, name, ext) != 0) {
 		return -9;
 	}
 
 	struct fat12_dir_entry existing;
+
 	if (fat12_find_entry(path, &existing, NULL, NULL) == 0) {
 		return -1;
 	}
 
 	int new_cluster = fat12_allocate_cluster(0);
+
 	if (new_cluster < 0) {
 		return -1;
 	}
@@ -764,6 +847,7 @@ int fat12_makedir(const char* path)
 	fat12_init_dir_cluster(new_cluster, parent_cluster);
 
 	int idx = fat12_create_entry(parent_cluster, name, ext, 0x10, new_cluster, 0, NULL);
+
 	if (idx < 0) {
 		fat12_free_cluster_chain(new_cluster);
 		return -1;
@@ -776,6 +860,7 @@ static int fat12_is_dir_empty(uint32_t dir_cluster)
 {
 	struct fat12_dir_entry entry;
 	uint32_t entry_idx = 0;
+
 	while (1) {
 		if (fat12_read_dir_entry(dir_cluster, entry_idx, &entry) < 0) {
 			break;
@@ -787,7 +872,8 @@ static int fat12_is_dir_empty(uint32_t dir_cluster)
 			entry_idx++;
 			continue;
 		}
-		if (entry.name[0] == '.' && (entry.name[1] == ' ' || (entry.name[1] == '.' && entry.name[2] == ' '))) {
+		if (entry.name[0] == '.' && (entry.name[1] == ' ' || (entry.name[1] == '.'
+					&& entry.name[2] == ' '))) {
 			entry_idx++;
 			continue;
 		}
@@ -859,16 +945,18 @@ int fat12_removefile(const char* filename)
 ptrdiff_t fat12_read(int fileno, void* buf, size_t count)
 {
 	int index = fileno - 3;
+
 	if (index < 0 || index >= MAX_OPEN_FILES || !open_files[index].used) {
 		return -5;
 	}
 
-	uint8_t *dest = (uint8_t *)buf;
+	uint8_t* dest = (uint8_t *) buf;
 	size_t bytes_read = 0;
 	uint32_t cluster_size = fat12_geom.sectors_per_cluster * 512;
 
 	while (bytes_read < count) {
 		uint32_t cursor = open_files[index].cursor;
+
 		/* EOF */
 		if (cursor >= open_files[index].file_size) {
 			break;
@@ -878,13 +966,16 @@ ptrdiff_t fat12_read(int fileno, void* buf, size_t count)
 		uint32_t offset_in_cluster = cursor % cluster_size;
 
 		uint32_t c = open_files[index].first_cluster;
+
 		if (c < 2) {
 			break;
 		}
 
 		int ok = 1;
+
 		for (uint32_t i = 0; i < cluster_index; i++) {
 			uint32_t next = fat12_read_fat_entry(c);
+
 			if (next < 2 || next >= 0x0FF8) {
 				ok = 0;
 				break;
@@ -897,19 +988,23 @@ ptrdiff_t fat12_read(int fileno, void* buf, size_t count)
 
 		uint32_t sector_offset = offset_in_cluster / 512;
 		uint32_t offset_in_sector = offset_in_cluster % 512;
-		uint32_t sector = fat12_geom.data_start_sector + (c - 2) * fat12_geom.sectors_per_cluster + sector_offset;
+		uint32_t sector =
+			fat12_geom.data_start_sector + (c - 2) * fat12_geom.sectors_per_cluster + sector_offset;
 
 		uint8_t sec_buf[512];
-		if (read_drive_sector(drive, sector, (uint32_t*)sec_buf) < 0) {
+
+		if (read_drive_sector(drive, sector, (uint32_t *) sec_buf) < 0) {
 			return -1;
 		}
 
 		uint32_t space_in_sector = 512 - offset_in_sector;
 		uint32_t to_read = count - bytes_read;
+
 		if (to_read > space_in_sector) {
 			to_read = space_in_sector;
 		}
 		uint32_t remaining_in_file = open_files[index].file_size - cursor;
+
 		if (to_read > remaining_in_file) {
 			to_read = remaining_in_file;
 		}
@@ -925,10 +1020,11 @@ ptrdiff_t fat12_read(int fileno, void* buf, size_t count)
 	return bytes_read;
 }
 
-static void from_fat12_name(const char *fat_name, const char *fat_ext, char *dest)
+static void from_fat12_name(const char* fat_name, const char* fat_ext, char* dest)
 {
 	int len = 0;
 	int name_len = 8;
+
 	while (name_len > 0 && fat_name[name_len - 1] == ' ') {
 		name_len--;
 	}
@@ -937,6 +1033,7 @@ static void from_fat12_name(const char *fat_name, const char *fat_ext, char *des
 	}
 
 	int ext_len = 3;
+
 	while (ext_len > 0 && fat_ext[ext_len - 1] == ' ') {
 		ext_len--;
 	}
@@ -977,6 +1074,7 @@ int fat12_listcontent(const char* path, contents_t* fcontents, size_t count)
 			if (count > 0) {
 				fcontents[0].content_type = FILE;
 				char* buf = contents_filenames[contents_filename_idx];
+
 				contents_filename_idx = (contents_filename_idx + 1) % 64;
 				from_fat12_name(target_entry.name, target_entry.ext, buf);
 				fcontents[0].filename = buf;
@@ -1000,14 +1098,16 @@ int fat12_listcontent(const char* path, contents_t* fcontents, size_t count)
 				read_idx++;
 				continue;
 			}
-			if (dir_entry.name[0] == '.' && 
-				(dir_entry.name[1] == ' ' || (dir_entry.name[1] == '.' && dir_entry.name[2] == ' '))) {
+			if (dir_entry.name[0] == '.' &&
+				(dir_entry.name[1] == ' ' || (dir_entry.name[1] == '.'
+						&& dir_entry.name[2] == ' '))) {
 				read_idx++;
 				continue;
 			}
 
 			fcontents[populated_count].content_type = (dir_entry.attr & 0x10) ? DIRECTORY : FILE;
 			char* buf = contents_filenames[contents_filename_idx];
+
 			contents_filename_idx = (contents_filename_idx + 1) % 64;
 			from_fat12_name(dir_entry.name, dir_entry.ext, buf);
 			fcontents[populated_count].filename = buf;
@@ -1027,6 +1127,7 @@ int fat12_listcontent(const char* path, contents_t* fcontents, size_t count)
 size_t fat12_get_size(int fileno)
 {
 	int index = fileno - 3;
+
 	if (index < 0 || index >= MAX_OPEN_FILES || !open_files[index].used) {
 		return 0;
 	}
