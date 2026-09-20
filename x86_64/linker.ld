@@ -30,4 +30,9 @@ SECTIONS
 		*(COMMON)
 		*(.bss)
 	}
+
+	/* TODO: Fix x86_64 support, for now we just provide nothing */
+	. = ALIGN(4096);
+	__free_ram = .;
+	__free_ram_end = .;
 }

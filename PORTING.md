@@ -4,6 +4,7 @@
     Then, add your `(arch).json` to `gen.sh`, adding it to both the `genmake` and `gensh` commands.
     Now, you can submit your patch. If it is properly formatted it will probably be submitted.
 2. Create proper `boot.s`, `linker.ld` for arch.
+    Linker script must have `__free_ram` and `__free_ram_end` set, which will be 64MB apart (or less if you have RAM limitations). You can check the [`i386` link script](i386/linker.ld) for an example.
 3. Create a Makefile with `LDFLAGS` and `ARCH_OBJ`.
 4. Create Kconfig for enabling/disabling features specific to the arch.
 5. You probably want a console backend. Write one for serial or whatever your arch uses.

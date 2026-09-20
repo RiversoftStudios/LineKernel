@@ -4,6 +4,8 @@
 #ifndef __SYSCALL_INIT_H__
 #define __SYSCALL_INIT_H__
 
+#include <stdint.h>
+
 void syscall_init(void);
 
 #endif

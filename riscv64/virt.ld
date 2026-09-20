@@ -56,4 +56,9 @@ SECTIONS {
   . = 0x88000000;
   PROVIDE(__heap_end = .);
   PROVIDE(__stack_top = .);
+
+  . = ALIGN(4096);
+  __free_ram = .;
+  . += 64 * 1024 * 1024; /* 64MB */
+  __free_ram_end = .;
 }

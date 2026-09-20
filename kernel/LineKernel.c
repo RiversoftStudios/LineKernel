@@ -6,6 +6,7 @@
 #include "kernelcheck.h"
 #include "version.h"
 #include "LineRenderer.h"
+#include "LineMemory.h"
 #include "LineInput.h"
 #include "LineColor.h"
 #include "syscall_init.h"
@@ -90,6 +91,9 @@ void initialize_start(void)
 	terminal_writestring(cmdline_str);
 	terminal_writestring("\n");
 
+	heap_init();
+	terminal_writestring("Memory allocation initialized.\n");
+
 #ifdef ARCH_i386
 	/* Initialize basic GDT, IDT, and Timer (PIT) */
 	gdt_init();
@@ -153,6 +157,24 @@ void kernel_main(void)
 
 	/* Test SYS_size: int fileno4 = syscall3(SYS_open, (uintptr_t)"README.MD", 0, 0);
 	   printf("fileno4 = %d\n", fileno4); printf("%d", syscall3(SYS_size, fileno4, 0, 0)); */
+
+	/* Test memory allocation:
+	uintptr_t paddr0 = (uintptr_t) kmalloc(0xFF);
+	uintptr_t paddr1 = (uintptr_t) kmalloc(0x10);
+
+	printf("paddr0 = %lx\n", paddr0);
+	printf("paddr1 = %lx\n", paddr1);
+
+	kfree((void *)paddr0);
+
+	uintptr_t paddr3 = (uintptr_t) kmalloc(0xAA);
+
+	printf("paddr3=%lx\n", paddr3);
+
+	strlcpy((char *)paddr1, "Hello malloc.\n", 15);
+
+	terminal_writestring((char *)paddr1);
+	*/
 
 	for (;;) {
 		terminal_write_for_char(get_char());
