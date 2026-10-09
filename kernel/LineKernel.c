@@ -158,23 +158,20 @@ void kernel_main(void)
 	/* Test SYS_size: int fileno4 = syscall3(SYS_open, (uintptr_t)"README.MD", 0, 0);
 	   printf("fileno4 = %d\n", fileno4); printf("%d", syscall3(SYS_size, fileno4, 0, 0)); */
 
-	/* Test memory allocation:
-	uintptr_t paddr0 = (uintptr_t) kmalloc(0xFF);
-	uintptr_t paddr1 = (uintptr_t) kmalloc(0x10);
+	/* Test memory allocation: uintptr_t paddr0 = (uintptr_t) kmalloc(0xFF); uintptr_t paddr1 =
+	   (uintptr_t) kmalloc(0x10);
 
-	printf("paddr0 = %lx\n", paddr0);
-	printf("paddr1 = %lx\n", paddr1);
+	   printf("paddr0 = %lx\n", paddr0); printf("paddr1 = %lx\n", paddr1);
 
-	kfree((void *)paddr0);
+	   kfree((void *)paddr0);
 
-	uintptr_t paddr3 = (uintptr_t) kmalloc(0xAA);
+	   uintptr_t paddr3 = (uintptr_t) kmalloc(0xAA);
 
-	printf("paddr3=%lx\n", paddr3);
+	   printf("paddr3=%lx\n", paddr3);
 
-	strlcpy((char *)paddr1, "Hello malloc.\n", 15);
+	   strlcpy((char *)paddr1, "Hello malloc.\n", 15);
 
-	terminal_writestring((char *)paddr1);
-	*/
+	   terminal_writestring((char *)paddr1); */
 
 	for (;;) {
 		terminal_write_for_char(get_char());
