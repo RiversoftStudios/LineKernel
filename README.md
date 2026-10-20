@@ -1,4 +1,4 @@
-# [<img src="https://github.com/user-attachments/assets/dcb081a1-0bb5-4bae-b080-a4eec30c745b" alt="LineKernel" width="512"/>](https://wiki.rivergames.ca/wiki/LineKernel)
+# [<img src="LK_COLOUR.png" alt="LineKernel" width="512"/>](https://wiki.rivergames.ca/wiki/LineKernel)
 [LineKernel](https://wiki.rivergames.ca/wiki/LineKernel) is a kernel unlike any other UNIX-Like kernel. LineKernel is a Monolithic kernel designed for real hardware, built from scratch, for the [LineCore Operating System](https://wiki.rivergames.ca/wiki/LineCoreOS).
 
 This kernel is for the LineCoreOS [x86](https://wiki.rivergames.ca/wiki/History_of_LineCoreOS#x86) version.
