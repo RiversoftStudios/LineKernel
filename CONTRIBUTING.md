@@ -5,6 +5,10 @@ Open a PR for big changes, even if you are team member.
 Use this command to properly format your code: `./indent.sh`
 Use tabs, not spaces.
 
+## Licensing
+We follow [REUSE](https://reuse.software/).
+Run `reuse lint` on your tree and make sure it passes!
+
 ## Porting
 If you are working on porting a new (meta-)arch, check out [this document](PORTING.md)
 

@@ -1,3 +1,6 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later
+ * SPDX-FileCopyrightText: Copyright (C) 2026 Riversoft Studios */
+
 #ifndef __LINEMEMORY_H__
 #define __LINEMEMORY_H__
 
