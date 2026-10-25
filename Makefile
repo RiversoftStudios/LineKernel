@@ -7,7 +7,8 @@ ifdef VERBOSE
     Q =
 else
     Q = @
-	MAKEFLAGS += --no-print-directory
+	MAKE_FLAGS += --no-print-directory
+	CLEANMAKE_FLAGS = --silent
 endif
 
 ifneq ("$(wildcard kernel/kconfig.mk)","")
@@ -28,20 +29,24 @@ else
 	META_ARCH_FLAGS =
 endif
 
-CC = $(CCPREFIX)gcc
-AS = $(CCPREFIX)as
+ifdef LLVM
+	CC = clang --target=$(ARCH_TARGET)
+	LDFLAGS += -Wl,-z,noexecstack
+else # GCC
+	CC = $(ARCH_TARGET)-gcc
+endif
 HOSTCC ?= cc
 HOSTCFLAGS ?= -O2 -pipe
 QEMU = $(ARCH_QEMU)
 CFLAGS ?= -O2 -pipe
-CFLAGS += -Ikernel -Ithird-party -I$(ARCH) $(META_ARCH_FLAGS) -Iinclude -DARCH_$(ARCH) -DARCH=\"$(ARCH)\" -DVERSION=\"$(VERSION)\" -std=gnu99 -ffreestanding -Wall -Wextra -Wmissing-declarations -Wstack-protector -fstack-protector-all $(ARCH_CFLAGS)
+CFLAGS += -Ikernel -Ithird-party -I$(ARCH) $(META_ARCH_FLAGS) -Iinclude -DARCH_$(ARCH) -DARCH=\"$(ARCH)\" -DVERSION=\"$(VERSION)\" -DPRINTF_DISABLE_SUPPORT_FLOAT -std=gnu99 -ffreestanding -Wall -Wextra -Wmissing-declarations -Wstack-protector -fstack-protector-all -Wno-ignored-attributes $(ARCH_CFLAGS)
 OBJ = $(ARCH_OBJ) $(META_ARCH_OBJ) $(KERNEL_OBJ)
 
 CONSOLECONFIG = kconfig/frontends/conf/kconfig-conf
 
 all:
-	$(Q)$(MAKE) kernel/kconfig.mk kernel/kconfig.h
-	$(Q)$(MAKE) LineKernel LineKernel.gz
+	$(Q)$(MAKE) $(MAKE_FLAGS) kernel/kconfig.mk kernel/kconfig.h
+	$(Q)$(MAKE) $(MAKE_FLAGS) LineKernel LineKernel.gz
 
 tools/config2%: ./tools/config2%.c
 	@echo "HOSTCC $< -> $@"
@@ -65,7 +70,7 @@ kconfig/frontends/%:
 	@echo "CONFIGURE kconfig"
 	$(Q)cd kconfig; ./configure > /dev/null
 	@echo "MAKE kconfig"
-	$(Q)cd kconfig; $(MAKE)
+	$(Q)cd kconfig; $(MAKE) $(MAKE_FLAGS)
 
 askconfig: Kconfig $(CONSOLECONFIG)
 	$(CONSOLECONFIG) Kconfig --oldaskconfig
@@ -79,7 +84,7 @@ allnoconfig: Kconfig $(CONSOLECONFIG)
 
 LineKernel: $(OBJ)
 	@echo "LD $(words $(filter %, $^)) objects -> $@"
-	$(Q)$(CC) -o LineKernel $(LDFLAGS) $(OBJ) -lgcc
+	$(Q)$(CC) -o LineKernel $(LDFLAGS) $(OBJ)
 
 %.gz: %
 	@echo "GZIP $< -> $@"
@@ -91,7 +96,7 @@ LineKernel: $(OBJ)
 
 %.o: %.s
 	@echo "AS $< -> $@"
-	$(Q)$(AS) $< -o $@
+	$(Q)$(CC) -c $< -o $@
 
 run: all
 	@echo "QEMU LineKernel"
@@ -113,12 +118,12 @@ clean:
 	@echo "RM $(words $(filter %, $(CLEANOBJ))) files"
 	$(Q)rm -f $(CLEANOBJ)
 	@echo "CLEAN kconfig"
-	$(Q)cd kconfig; $(MAKE) --silent clean || true
+	$(Q)cd kconfig; $(MAKE) $(MAKE_FLAGS) $(CLEANMAKEFLAGS) clean || true
 
 distclean: clean
 	@echo "RM $(words $(filter %, $(DISTCLEANOBJ))) files"
 	$(Q)rm -rf $(DISTCLEANOBJ)
 	@echo "DISTCLEAN kconfig"
-	$(Q)cd kconfig; $(MAKE) --silent distclean || true
+	$(Q)cd kconfig; $(MAKE) $(MAKE_FLAGS) $(CLEANMAKEFLAGS) distclean || true
 
 .PHONY: all Kconfig run run-iso clean distclean
