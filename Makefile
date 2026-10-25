@@ -3,6 +3,13 @@
 
 VERSION = 0.1.0.983
 
+ifdef VERBOSE
+    Q =
+else
+    Q = @
+	MAKEFLAGS += --no-print-directory
+endif
+
 ifneq ("$(wildcard kernel/kconfig.mk)","")
 	include kernel/kconfig.mk
 endif
@@ -33,25 +40,32 @@ OBJ = $(ARCH_OBJ) $(META_ARCH_OBJ) $(KERNEL_OBJ)
 CONSOLECONFIG = kconfig/frontends/conf/kconfig-conf
 
 all:
-	$(MAKE) kernel/kconfig.mk kernel/kconfig.h
-	$(MAKE) LineKernel LineKernel.gz
+	$(Q)$(MAKE) kernel/kconfig.mk kernel/kconfig.h
+	$(Q)$(MAKE) LineKernel LineKernel.gz
 
 tools/config2%: ./tools/config2%.c
-	$(HOSTCC) $(HOSTCFLAGS) $< -o $@
+	@echo "HOSTCC $< -> $@"
+	$(Q)$(HOSTCC) $(HOSTCFLAGS) $< -o $@
 
 kernel/kconfig.h: .config tools/config2header
-	tools/config2header .config > kernel/kconfig.h
+	@echo "CONFIG2 .config -> $@"
+	$(Q)tools/config2header .config > kernel/kconfig.h
 
 kernel/kconfig.mk: .config tools/config2makefile
-	tools/config2makefile .config > kernel/kconfig.mk
+	@echo "CONFIG2 .config -> $@"
+	$(Q)tools/config2makefile .config > kernel/kconfig.mk
 
 Kconfig: Kconfig.template
-	cp Kconfig.template Kconfig
+	@echo "CP $^ -> $@"
+	$(Q)cp Kconfig.template Kconfig
 	sed -i "s/{ARCH}/$(ARCH)/g" Kconfig
 	sed -i "s/{VERSION}/$(VERSION)/g" Kconfig
 
 kconfig/frontends/%:
-	cd kconfig; ./configure; $(MAKE)
+	@echo "CONFIGURE kconfig"
+	$(Q)cd kconfig; ./configure > /dev/null
+	@echo "MAKE kconfig"
+	$(Q)cd kconfig; $(MAKE)
 
 askconfig: Kconfig $(CONSOLECONFIG)
 	$(CONSOLECONFIG) Kconfig --oldaskconfig
@@ -64,33 +78,47 @@ allnoconfig: Kconfig $(CONSOLECONFIG)
 	$(CONSOLECONFIG) Kconfig --allnoconfig
 
 LineKernel: $(OBJ)
-	$(CC) -o LineKernel $(LDFLAGS) $(OBJ) -lgcc
+	@echo "LD $(words $(filter %, $^)) objects -> $@"
+	$(Q)$(CC) -o LineKernel $(LDFLAGS) $(OBJ) -lgcc
 
-LineKernel.gz: LineKernel
-	gzip -9 -n -f -k LineKernel
+%.gz: %
+	@echo "GZIP $< -> $@"
+	$(Q)gzip -9 -n -f -k $<
 
 %.o: %.c
-	$(CC) -c $< -o $@ $(CFLAGS)
+	@echo "CC $< -> $@"
+	$(Q)$(CC) -c $< -o $@ $(CFLAGS)
 
 %.o: %.s
-	$(AS) $< -o $@
+	@echo "AS $< -> $@"
+	$(Q)$(AS) $< -o $@
 
 run: all
-	$(QEMU) -m 2G -kernel LineKernel $(QEMUARGS)
+	@echo "QEMU LineKernel"
+	$(Q)$(QEMU) -m 2G -kernel LineKernel $(QEMUARGS)
 
 LineKernel.iso: all
-	cp LineKernel.gz iso/boot/LineKernel.gz
+	@echo "CP LineKernel.gz -> iso/boot/LineKernel.gz"
+	$(Q)cp LineKernel.gz iso/boot/LineKernel.gz
 	grub-mkrescue -o LineKernel.iso iso
 
 run-iso: LineKernel.iso
-	$(QEMU) -cdrom LineKernel.iso $(QEMUARGS)
+	@echo "QEMU $^"
+	$(Q)$(QEMU) -cdrom $^ $(QEMUARGS)
+
+CLEANOBJ = LineKernel LineKernel.gz iso/boot/LineKernel.gz LineKernel.iso $(OBJ) kernel/kconfig.h kernel/kconfig.mk tools/config2header tools/config2makefile
+DISTCLEANOBJ = Kconfig .config .config.old kernel/LineKernel.qcow2 docs/
 
 clean:
-	rm -f LineKernel LineKernel.gz iso/boot/LineKernel.gz LineKernel.iso $(OBJ) kernel/kconfig.h kernel/kconfig.mk tools/config2header tools/config2makefile
-	cd kconfig; make clean || true
+	@echo "RM $(words $(filter %, $(CLEANOBJ))) files"
+	$(Q)rm -f $(CLEANOBJ)
+	@echo "CLEAN kconfig"
+	$(Q)cd kconfig; $(MAKE) --silent clean || true
 
 distclean: clean
-	rm -rf Kconfig .config .config.old kernel/LineKernel.qcow2 docs/
-	cd kconfig; make distclean || true
+	@echo "RM $(words $(filter %, $(DISTCLEANOBJ))) files"
+	$(Q)rm -rf $(DISTCLEANOBJ)
+	@echo "DISTCLEAN kconfig"
+	$(Q)cd kconfig; $(MAKE) --silent distclean || true
 
 .PHONY: all Kconfig run run-iso clean distclean
