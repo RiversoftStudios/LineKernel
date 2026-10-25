@@ -9,6 +9,7 @@ else
     Q = @
 	MAKE_FLAGS += --no-print-directory
 	CLEANMAKE_FLAGS = --silent
+	SILENT_OUTPUT = > /dev/null
 endif
 
 ifneq ("$(wildcard kernel/kconfig.mk)","")
@@ -68,7 +69,7 @@ Kconfig: Kconfig.template
 
 kconfig/frontends/%:
 	@echo "CONFIGURE kconfig"
-	$(Q)cd kconfig; ./configure > /dev/null
+	$(Q)cd kconfig; ./configure $(SILENT_OUTPUT)
 	@echo "MAKE kconfig"
 	$(Q)cd kconfig; $(MAKE) $(MAKE_FLAGS)
 
