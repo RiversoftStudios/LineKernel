@@ -11,7 +11,7 @@ extern "C" {
 #include <LineKernel/syscall/syscall_ids.h>
 
 #if defined(__i386__)
-static inline long syscall3(long num, long arg1, long arg2, long arg3)
+static long syscall3(long num, long arg1, long arg2, long arg3)
 {
 	long ret;
 	__asm__ volatile (
@@ -23,7 +23,7 @@ static inline long syscall3(long num, long arg1, long arg2, long arg3)
 	return ret;
 }
 #elif defined(__x86_64__)
-static inline long syscall3(long num, long arg1, long arg2, long arg3)
+static long syscall3(long num, long arg1, long arg2, long arg3)
 {
 	long ret;
 	__asm__ volatile (
@@ -35,7 +35,7 @@ static inline long syscall3(long num, long arg1, long arg2, long arg3)
 	return ret;
 }
 #elif defined(__riscv) && (__riscv_xlen == 64)
-static inline long syscall3(long num, long arg1, long arg2, long arg3)
+static long syscall3(long num, long arg1, long arg2, long arg3)
 {
 	register long a7 __asm__("a7") = num;
 	register long a0 __asm__("a0") = arg1;
