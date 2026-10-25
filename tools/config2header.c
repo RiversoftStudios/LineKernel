@@ -26,7 +26,7 @@ int main(void)
 		return EXIT_FAILURE;
 	}
 
-	char line[BUFSIZ];
+	char line[BUFSIZ]; /* TODO: Dynamic buffer */
 
 	while (fgets(line, sizeof(line), file)) {
 		line[strcspn(line, "\r\n")] = '\0';

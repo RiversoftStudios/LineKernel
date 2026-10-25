@@ -25,6 +25,7 @@ void vga_terminal_newline(void);
 void vga_terminal_backspace(void);
 void vga_terminal_scroll(void);
 void vga_terminal_get_cursor(uint8_t * x, uint8_t * y);
+uint16_t vga_terminal_cursor_position(void);
 
 #endif
 #endif

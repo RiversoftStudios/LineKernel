@@ -5,9 +5,10 @@
 #define __POWER_H__
 
 #include <stdint.h>
+#include "compilers.h"
 
-void poweroff(void);
-void reboot(void);
-void halt(void);
+ATTRIBUTE_NORETURN void poweroff(void);
+ATTRIBUTE_NORETURN void reboot(void);
+ATTRIBUTE_NORETURN void halt(void);
 
 #endif

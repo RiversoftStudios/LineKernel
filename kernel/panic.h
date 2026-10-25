@@ -9,9 +9,10 @@
 #include "str.h"
 #include "printf.h"
 #include "LineRandom.h"
+#include "compilers.h"
 
 char* random_error_message(void);
-void panic_(const char* file, int line, const char* format, ...);
+ATTRIBUTE_NORETURN void panic_(const char* file, int line, const char* format, ...);
 
 #define panic(format, ...) panic_(__FILE__, __LINE__, format __VA_OPT__(,) __VA_ARGS__)
 

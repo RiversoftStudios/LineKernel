@@ -10,19 +10,23 @@
 
 /* TODO: Some of these values are specific to `virt`. */
 
-void poweroff(void)
-{
-	*(uint32_t *) SYSCON_ADDR = 0x5555;
-}
-
-void reboot(void)
-{
-	*(uint32_t *) SYSCON_ADDR = 0x7777;
-}
-
-void halt(void)
+ATTRIBUTE_NORETURN void halt(void)
 {
 	while (1) {
 		__asm__ volatile ("wfi");
 	}
+}
+
+ATTRIBUTE_NORETURN void poweroff(void)
+{
+	*(uint32_t *) SYSCON_ADDR = 0x5555;
+
+	halt();
+}
+
+ATTRIBUTE_NORETURN void reboot(void)
+{
+	*(uint32_t *) SYSCON_ADDR = 0x7777;
+
+	halt();
 }

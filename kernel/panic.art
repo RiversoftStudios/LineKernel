@@ -15,7 +15,7 @@ char* error_art[] = {
 		"LLL---LineCoreOS---LLL\n"
 		"LLL--installation--LLL\n"
 		"LLL---disk #1/3----LLL\n"
-		"LAL----------------L L\n",
+		"LAL----------------L L\n"
 
 #ifdef ARCH_riscv64
 		,

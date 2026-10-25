@@ -155,6 +155,8 @@ void terminal_write_for_char(const char c)
 }
 
 /* needed for printf */
+void _putchar(char character);
+
 void _putchar(char character)
 {
 	terminal_write_for_char(character);

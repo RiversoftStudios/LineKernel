@@ -5,7 +5,7 @@
 #include "bios_tools.h"
 #include "LineRenderer.h"
 
-void halt(void)
+ATTRIBUTE_NORETURN void halt(void)
 {
 	__asm__ volatile ("cli");
 
@@ -14,7 +14,7 @@ void halt(void)
 	}
 }
 
-void reboot(void)
+ATTRIBUTE_NORETURN void reboot(void)
 {
 	uint8_t good = 0x02;
 
@@ -24,7 +24,7 @@ void reboot(void)
 	halt();
 }
 
-void poweroff(void)
+ATTRIBUTE_NORETURN void poweroff(void)
 {
 	/* TODO: ACPI */
 	terminal_cls();

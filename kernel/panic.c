@@ -18,7 +18,7 @@ char* random_error_message(void)
 	}
 }
 
-void panic_(const char* file, int line, const char* format, ...)
+ATTRIBUTE_NORETURN void panic_(const char* file, int line, const char* format, ...)
 {
 	char linestr[30];
 

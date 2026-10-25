@@ -16,7 +16,7 @@ int drive_init(drivesformat_t drive)
 	}
 }
 
-/* How many bits should out_buf be? */
+/* TODO: How many bits/what type should out_buf be? */
 int read_drive_sector(drivesformat_t drive, uint32_t lba, uint32_t* out_buf)
 {
 	switch (drive) {
