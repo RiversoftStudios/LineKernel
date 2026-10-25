@@ -37,6 +37,12 @@
 #define ATTRIBUTE_ALIGNED(x)
 #endif
 
+#if defined(__GNUC__) || defined(__clang__)
+#define ATTRIBUTE_MALLOC(freefunc, arg) __attribute__((malloc(freefunc, arg)))
+#else
+#define ATTRIBUTE_MALLOC(freefunc, arg)
+#endif
+
 #if defined(__x86_64__) || defined(__amd64__)
 #define CPU_BITS 64
 #elif defined(__i386__) || defined(_M_IX86)
