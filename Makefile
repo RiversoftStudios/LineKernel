@@ -40,7 +40,7 @@ HOSTCC ?= cc
 HOSTCFLAGS ?= -O2 -pipe
 QEMU = $(ARCH_QEMU)
 CFLAGS ?= -O2 -pipe
-CFLAGS += -Ikernel -Ithird-party -I$(ARCH) $(META_ARCH_FLAGS) -Iinclude -DARCH_$(ARCH) -DARCH=\"$(ARCH)\" -DVERSION=\"$(VERSION)\" -DPRINTF_DISABLE_SUPPORT_FLOAT -std=gnu99 -ffreestanding -Wall -Wextra -Wmissing-declarations -Wstack-protector -fstack-protector-all -Wno-ignored-attributes $(ARCH_CFLAGS)
+CFLAGS += -Ikernel -Ithird-party -I$(ARCH) $(META_ARCH_FLAGS) -Iinclude -DARCH_$(ARCH) -DARCH=\"$(ARCH)\" -DVERSION=\"$(VERSION)\" -DPRINTF_DISABLE_SUPPORT_FLOAT -DPRINTF_DISABLE_SUPPORT_LONG_LONG -std=gnu99 -ffreestanding -Wall -Wextra -Wmissing-declarations -Wstack-protector -fstack-protector-all -Wno-ignored-attributes $(ARCH_CFLAGS)
 OBJ = $(ARCH_OBJ) $(META_ARCH_OBJ) $(KERNEL_OBJ)
 
 CONSOLECONFIG = kconfig/frontends/conf/kconfig-conf

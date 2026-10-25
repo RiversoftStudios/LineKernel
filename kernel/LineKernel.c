@@ -11,7 +11,6 @@
 #include "LineColor.h"
 #include "syscall_init.h"
 #include "version.h"
-#include "LineKernel/syscall.h"
 #include "LineKernel/contents_t.h"
 #ifdef CONFIG_PS2_KEYBOARD
 #include "ps2_keyboard.h"
