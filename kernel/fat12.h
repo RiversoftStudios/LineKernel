@@ -11,6 +11,7 @@
 #include "LineDrive.h"
 #include "printf.h"
 #include "LineKernel/contents_t.h"
+#include "compilers.h"
 #include <stddef.h>
 
 struct fat12_bpb {
@@ -34,7 +35,7 @@ struct fat12_bpb {
 	uint32_t volume_id;
 	char volume_label[11];
 	char fs_type[8];
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 
 struct fat12_dir_entry {
 	char name[8];
@@ -50,7 +51,7 @@ struct fat12_dir_entry {
 	uint16_t last_write_date;
 	uint16_t first_cluster_low;
 	uint32_t file_size;
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 
 int detect_fat12(drivesformat_t drive);
 int fat12_open(const char* filename);

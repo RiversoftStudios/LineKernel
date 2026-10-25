@@ -5,6 +5,7 @@
 #define __IDT_H__
 
 #include <stdint.h>
+#include "compilers.h"
 
 struct idt_entry {
 	uint16_t base_low;
@@ -12,12 +13,12 @@ struct idt_entry {
 	uint8_t always0;
 	uint8_t flags;
 	uint16_t base_high;
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 
 struct idt_ptr {
 	uint16_t limit;
 	uint32_t base;
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 
 struct regs {
 	uint32_t ds;

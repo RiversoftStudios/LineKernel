@@ -3,6 +3,7 @@
 
 #include "fat12.h"
 #include "str.h"
+#include "compilers.h"
 #include "fileno.h"
 
 #ifdef CONFIG_FAT12
@@ -20,7 +21,7 @@ struct fat12_geometry {
 	uint32_t root_dir_start_sector;
 	uint32_t root_dir_sectors;
 	uint32_t data_start_sector;
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 
 static struct fat12_geometry fat12_geom;
 

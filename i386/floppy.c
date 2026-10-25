@@ -1,15 +1,18 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later
  * SPDX-FileCopyrightText: Copyright (C) 2026 Riversoft Studios */
 
+#include "kconfig.h"
+#ifdef CONFIG_FLOPPY
+
 #include "floppy.h"
+#include "compilers.h"
+#include "panic.h"
+#include "printf.h"
 #include "idt.h"
 #include "dma.h"
 #include "timer.h"
 #include "bios_tools.h"
-#include "panic.h"
-#include "printf.h"
 
-#ifdef CONFIG_FLOPPY
 /* FDC registers */
 #define FDC_DOR 		0x3F2
 #define FDC_MSR 		0x3F4
@@ -19,7 +22,7 @@
 #define READ_WRITE_TIMEOUT 100000
 
 static volatile int fdc_irq_fired = 0;
-static uint8_t floppy_dma_buffer[512] __attribute__((aligned(4096)));
+static uint8_t floppy_dma_buffer[512] ATTRIBUTE_ALIGNED(4096);
 
 static void fdc_irq_handler(struct regs* r)
 {
