@@ -10,10 +10,10 @@
 
 #define COMMAND2TABLE(name) [SYS_##name] = sys_##name
 
-#define DEFINECALL(name, ...) int sys_##name(__VA_ARGS__); \
-	int sys_##name(__VA_ARGS__)
+#define DEFINECALL(name, ...) long sys_##name(__VA_ARGS__); \
+	long sys_##name(__VA_ARGS__)
 
-typedef int (*syscall_t)(long, long, long, long, long, long);
+typedef long (*syscall_t)(long, long, long, long, long, long);
 
 DEFINECALL(print2, uintptr_t read)
 {
