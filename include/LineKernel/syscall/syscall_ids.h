@@ -24,5 +24,7 @@
 #define SYS_read       12
 #define SYS_list       13
 #define SYS_size       14
+#define SYS_alloc      15
+#define SYS_free       16
 
 #endif

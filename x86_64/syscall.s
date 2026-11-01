@@ -1,6 +1,8 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later
  * SPDX-FileCopyrightText: Copyright (C) 2026 Riversoft Studios */
 
+.include "kernel/syscalls_asm.inc"
+
 .global syscall_handler
 .extern syscall_table
 
@@ -15,8 +17,7 @@ syscall_handler:
 	movq %r10, %rcx
 
 	# Check boundaries (If RAX >= [number], jump to bad_syscall)
-	# REPLACEMAXSYSCALL
-	cmpq $15, %rax
+	cmpq $MAX_SYSCALL, %rax
 	jae .bad_syscall
 
 	# Call syscall handler from table (pointers are 8 bytes on x86_64)

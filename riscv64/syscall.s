@@ -1,6 +1,8 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later
  * SPDX-FileCopyrightText: Copyright (C) 2026 Riversoft Studios */
 
+.include "kernel/syscalls_asm.inc"
+
 .global syscall_handler
 .extern syscall_table
 
@@ -39,8 +41,7 @@ syscall_handler:
 
 .is_syscall:
 	# 3. Boundary check (a7 holds syscall index)
-	# REPLACEMAXSYSCALL
-	li t0, 15
+	li t0, MAX_SYSCALL
 	bgeu a7, t0, .bad_syscall
 
 	# 4. Invoke the C handler from syscall_table

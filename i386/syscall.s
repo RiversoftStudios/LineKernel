@@ -1,6 +1,8 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later
  * SPDX-FileCopyrightText: Copyright (C) 2026 Riversoft Studios */
 
+.include "kernel/syscalls_asm.inc"
+
 .global syscall_handler
 .extern syscall_table
 
@@ -19,8 +21,7 @@ syscall_handler:
 	pushl %ebx
 
 	# Check boundaries (If EAX >= [number], jump to bad_syscall)
-	# REPLACEMAXSYSCALL
-	cmpl $15, %eax
+	cmpl $MAX_SYSCALL, %eax
 	jae .bad_syscall
 
 	call *syscall_table(,%eax,4)

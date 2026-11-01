@@ -6,6 +6,7 @@
 #include "LineRenderer.h"
 #include "LineColor.h"
 #include "LineFilesystem.h"
+#include "LineMemory.h"
 
 #define COMMAND2TABLE(name) [SYS_##name] = sys_##name
 
@@ -94,6 +95,17 @@ DEFINECALL(size, int fileno)
 	return get_size(fileno);
 }
 
+DEFINECALL(alloc, size_t size)
+{
+	return (uintptr_t)kmalloc(size);
+}
+
+DEFINECALL(free, uintptr_t ptr)
+{
+	kfree((void*)ptr);
+	return 0;
+}
+
 void* syscall_table[] = {
 	COMMAND2TABLE(print2),
 	COMMAND2TABLE(termcolor),
@@ -110,4 +122,6 @@ void* syscall_table[] = {
 	COMMAND2TABLE(read),
 	COMMAND2TABLE(list),
 	COMMAND2TABLE(size),
+	COMMAND2TABLE(alloc),
+	COMMAND2TABLE(free),
 };
