@@ -1,0 +1,4 @@
+SPDX-License-Identifier: LGPL-2.1-or-later
+SPDX-FileCopyrightText: Copyright (C) 1995-2026 Free Software Foundation, Inc.
+
+Source: https://sourceware.org/git/?p=glibc.git;a=blob_plain;f=elf/elf.h;h=b482fcfb64890752fc1aa4e9d208a7b94f022d38;hb=HEAD

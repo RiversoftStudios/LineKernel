@@ -43,6 +43,9 @@
 #define ATTRIBUTE_MALLOC(freefunc, arg)
 #endif
 
+#define CPU_BITS_64 64
+#define CPU_BITS_32 32
+
 #if defined(__x86_64__) || defined(__amd64__)
 #define CPU_BITS 64
 #elif defined(__i386__) || defined(_M_IX86)

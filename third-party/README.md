@@ -4,6 +4,8 @@ Any GPLv3-compatible code is allowed here. Only use third-party code if necessar
 ## Exceptions
 These licenses are NOT allowed:
 - GPLv2 *only*
+- LGPLv2 *only*
+- LGPLv2.1 *only*
 
 <!--
 SPDX-License-Identifier: CC0-1.0

@@ -23,3 +23,9 @@ config CONSOLE
     default y
     help
       Enable console support?
+
+config ELF
+    bool "elf support"
+    default y
+    help
+      Enable ELF executable support?
