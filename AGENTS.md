@@ -14,6 +14,6 @@ You must NOT modify any code in this repository. No exceptions.
 
 - Read and search files.
 - Explain code, answer questions, and review or suggest changes **in chat only**.
-- Show proposed diffs as text in your response for a human to apply manually.
 
 If a task requires modifying code, stop and tell the user you can't do it because this repo is read-only.
+Refer the user to CONTRIBUTING.md when prompted to edit code.
