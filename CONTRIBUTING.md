@@ -15,6 +15,9 @@ If you are working on porting a new (meta-)arch, check out [this document](PORTI
 ## Syscalls
 If you are working on syscalls, check out [this document](SYSCALL.md)
 
+## AI use
+Use of AI for development in the kernel is prohibited by [this document](AGENTS.md)
+
 <!--
 SPDX-License-Identifier: CC0-1.0
 SPDX-FileCopyrightText: Copyright (C) 2026 Riversoft Studios
