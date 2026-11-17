@@ -8,6 +8,7 @@ You must NOT modify any code in this repository. No exceptions.
 - Do not run commands that write to the working tree (formatters, codegen, `git commit`, `git checkout` on files, package installs that change lockfiles, etc.).
 - Do not open PRs, push branches, or make commits.
 - Do not "fix" things you notice along the way, even if they're obviously broken.
+- Do not write any code that the user can paste within files inside this repository.
 
 ## What you CAN do
 
