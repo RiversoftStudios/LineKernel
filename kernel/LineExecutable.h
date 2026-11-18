@@ -38,6 +38,7 @@ typedef Elf64_Off Elf_Off;
 #ifdef CONFIG_ELF
 int valid_elf_magic(Elf_Ehdr ehdr);
 Elf_Addr get_elf_entry(Elf_Ehdr ehdr);
+int is_elf_pie(Elf_Ehdr ehdr);
 #endif
 
 #endif

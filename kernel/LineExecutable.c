@@ -17,13 +17,20 @@ int valid_elf_magic(Elf_Ehdr ehdr)
 }
 
 /** PIE-independent, you will have to check that yourself.
- ** @retval -1 Failure, invalid header 
+ ** @retval 0 Failure, invalid header 
  ** @retval other Address */
 Elf_Addr get_elf_entry(Elf_Ehdr ehdr)
 {
 	if (valid_elf_magic(ehdr))
 		return ehdr.e_entry;
-	return -1;
+	return 0;
+}
+
+int is_elf_pie(Elf_Ehdr ehdr)
+{
+	if (valid_elf_magic(ehdr))
+		return ehdr.e_type == ET_DYN;
+	return 0;
 }
 
 #endif
