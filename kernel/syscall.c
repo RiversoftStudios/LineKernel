@@ -97,12 +97,12 @@ DEFINECALL(size, int fileno)
 
 DEFINECALL(alloc, size_t size)
 {
-	return (uintptr_t)kmalloc(size);
+	return (uintptr_t) kmalloc(size);
 }
 
 DEFINECALL(free, uintptr_t ptr)
 {
-	kfree((void*)ptr);
+	kfree((void *)ptr);
 	return 0;
 }
 

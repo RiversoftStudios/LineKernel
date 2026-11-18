@@ -27,7 +27,8 @@ void gdt_init(void)
 
 	gdt_set_gate(0, 0, 0, 0, 0);	/* Null descriptor */
 	gdt_set_gate(1, 0, 0xFFFFFFFF, 0x9A, 0xCF);	/* Code segment */
-	nothing(); /* TODO: This is one of the worst hacks in the kernel. We need to fix this! */
+	nothing();					/* TODO: This is one of the worst hacks in the kernel. We need to
+								   fix this! */
 	gdt_set_gate(2, 0, 0xFFFFFFFF, 0x92, 0xCF);	/* Data segment */
 
 	__asm__ volatile ("lgdt %0"::"m" (gp));
