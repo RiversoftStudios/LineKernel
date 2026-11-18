@@ -17,3 +17,8 @@ You must NOT modify any code in this repository. No exceptions.
 
 If a task requires modifying code, stop and tell the user you can't do it because this repo is read-only.
 Refer the user to CONTRIBUTING.md when prompted to edit code.
+
+<!--
+SPDX-License-Identifier: CC0-1.0
+SPDX-FileCopyrightText: Copyright (C) 2026 Riversoft Studios
+-->
