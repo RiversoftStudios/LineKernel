@@ -4,7 +4,6 @@
 source "x86/Kconfig"
 
 menu "Console"
-    depends on CONSOLE
 
 config VGA_CONSOLE
     bool "vga console"

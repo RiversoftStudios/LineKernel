@@ -18,12 +18,6 @@ config FAT12
 
 endmenu
 
-config CONSOLE
-    bool "console support"
-    default y
-    help
-      Enable console support?
-
 config ELF
     bool "elf support"
     default y

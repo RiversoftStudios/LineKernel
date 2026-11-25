@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // \author (c) Marco Paland (info@paland.com)
-//             2014-2019, PALANDesign Hannover, Germany
+//             2014-2026, PALANDesign Hannover, Germany
 //
 // \license The MIT License (MIT)
 //
@@ -41,9 +41,28 @@ extern "C" {
 #endif
 
 
+// let GCC and Clang check the arguments against the format string (-Wformat), like for the standard printf
+#ifdef __GNUC__
+// gnu_printf needs GCC 4.4; Clang reports itself as GCC 4.2 and doesn't support gnu_printf, so it gets printf
+# if ((__GNUC__ == 4 && __GNUC_MINOR__ >= 4) || __GNUC__ > 4)
+#  define ATTR_PRINTF(one_based_format_index, first_arg) \
+__attribute__((format(__gnu_printf__, (one_based_format_index), (first_arg))))
+# else
+#  define ATTR_PRINTF(one_based_format_index, first_arg) \
+__attribute__((format(__printf__, (one_based_format_index), (first_arg))))
+# endif
+# define ATTR_VPRINTF(one_based_format_index) ATTR_PRINTF((one_based_format_index), 0)
+#else
+# define ATTR_PRINTF(one_based_format_index, first_arg)
+# define ATTR_VPRINTF(one_based_format_index)
+#endif
+
+
 /**
- * Output a character to a custom device like UART, used by the printf() function
+ * Output a character to a custom device like UART, used by the printf() and vprintf() functions
  * This function is declared here only. You have to write your custom implementation somewhere
+ * If printf.c is compiled with PRINTF_DISABLE_SUPPORT_PUTCHAR, printf() and vprintf() are not
+ * provided and no implementation is needed
  * \param character Character to output
  */
 void _putchar(char character);
@@ -58,7 +77,7 @@ void _putchar(char character);
  * \return The number of characters that are written into the array, not counting the terminating null character
  */
 #define printf printf_
-int printf_(const char* format, ...);
+int printf_(const char* format, ...) ATTR_PRINTF(1, 2);
 
 
 /**
@@ -69,7 +88,7 @@ int printf_(const char* format, ...);
  * \return The number of characters that are WRITTEN into the buffer, not counting the terminating null character
  */
 #define sprintf sprintf_
-int sprintf_(char* buffer, const char* format, ...);
+int sprintf_(char* buffer, const char* format, ...) ATTR_PRINTF(2, 3);
 
 
 /**
@@ -84,8 +103,8 @@ int sprintf_(char* buffer, const char* format, ...);
  */
 #define snprintf  snprintf_
 #define vsnprintf vsnprintf_
-int  snprintf_(char* buffer, size_t count, const char* format, ...);
-int vsnprintf_(char* buffer, size_t count, const char* format, va_list va);
+int  snprintf_(char* buffer, size_t count, const char* format, ...)        ATTR_PRINTF(3, 4);
+int vsnprintf_(char* buffer, size_t count, const char* format, va_list va) ATTR_VPRINTF(3);
 
 
 /**
@@ -95,19 +114,20 @@ int vsnprintf_(char* buffer, size_t count, const char* format, va_list va);
  * \return The number of characters that are WRITTEN into the buffer, not counting the terminating null character
  */
 #define vprintf vprintf_
-int vprintf_(const char* format, va_list va);
+int vprintf_(const char* format, va_list va) ATTR_VPRINTF(1);
 
 
 /**
- * printf with output function
+ * printf/vprintf with output function
  * You may use this as dynamic alternative to printf() with its fixed _putchar() output
  * \param out An output function which takes one character and an argument pointer
  * \param arg An argument pointer for user data passed to output function
  * \param format A string that specifies the format of the output
+ * \param va A value identifying a variable arguments list
  * \return The number of characters that are sent to the output function, not counting the terminating null character
  */
-int fctprintf(void (*out)(char character, void* arg), void* arg, const char* format, ...);
-
+int  fctprintf(void (*out)(char character, void* arg), void* arg, const char* format, ...)        ATTR_PRINTF(3, 4);
+int vfctprintf(void (*out)(char character, void* arg), void* arg, const char* format, va_list va) ATTR_VPRINTF(3);
 
 #ifdef __cplusplus
 }

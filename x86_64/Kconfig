@@ -4,7 +4,6 @@
 source "x86/Kconfig"
 
 menu "Console"
-    depends on CONSOLE
 
 config SERIAL_CONSOLE
     bool "serial console"
